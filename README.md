@@ -9,7 +9,7 @@ Use ASD to move and space to fire you pistol. The player can convert tables to c
 Clear the entire train of hostiles. 
 
 ###Team
-+ Oliver
-+ Michael
-+ Anthony
-+ JFRKIGHHJKGJKq
++ Oliver Barnum
++ Michael Cohen
++ Anthony Giallella
++ Ryan Mignini
