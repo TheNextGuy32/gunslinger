@@ -1,51 +1,42 @@
-use strict;
-var canvas = document.getElementById(canvas);
-var ctx = canvas.getContext(2d);
+'use strict';
+var canvas = document.getElementById("canvas");
+var ctx = canvas.getContext('2d');
 
 //  Keyboard input
 var keys = {};
 var oldKeys = {};
-addEventListener(keydown, function (e) 
+addEventListener("keydown", function (e) 
 {
 	if(!keys.hasOwnProperty(e.keyCode))
 	{
-		  The key is newly down!
+		 // The key is newly down!
     	keys[e.keyCode] = true;
 	}
 }, false);
 
-addEventListener(keyup, function (e) 
+addEventListener("keyup", function (e) 
 {
 	if(keys.hasOwnProperty(e.keyCode))
 	{
-		  The key is newly released!
+		 // The key is newly released!
     	delete keys[e.keyCode];
 	}
 
 }, false);
 
-function input(){
-	if ( keys[87] && !oldKeys[87]) {    W
+function input() {
+	if ( keys[87] && !oldKeys[87]) {    //W
 		console.log('W');
 	}
-	else if (keys[68] ) {    D
+	else if (keys[68] ) {   // D
 		console.log('D');
 	}
 
-	else if ( keys[65] ) {    A
+	else if ( keys[65] ) {    //A
 		console.log('A');
 	}
-	if ( keys [83] ) {    S
+	if ( keys [83] ) {    //S
 		console.log('S');
-	}
-
-	if((keys[68]  keys[65]))
-	{
-		if ( keys[32] && !oldKeys[32]) {    SPACE
-
-		}
-
-		
 	}
 }
 
@@ -64,7 +55,7 @@ function init() {
 function update() {
 	
 	//  Update code
-	for(var t  = 0 ; t  things.length; t++)
+	for(var t  = 0 ; t < things.length; t++)
 	{
 		things[t].accelerationX = 0;
 		things[t].accelerationY = 0;
@@ -87,7 +78,7 @@ function draw() {
 
 	ctx.save();
 	ctx.fillStyle = 'gray';
-	ctx.fillRect(0,0,800,600);
+	ctx.fillRect(0,0,canvas.width,canvas.height);
 	ctx.restore();
 	
 }
