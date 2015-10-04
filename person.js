@@ -9,7 +9,8 @@ var MOVEMENT =
 	STANDING:0,
 	WALKING: 1,
 	RUNNING: 2,
-	SLIDING: 3
+	SLIDING: 3,
+	CROUCHING: 4
 }
 
 var walkSpeed = 50;
@@ -72,8 +73,13 @@ function Person(x, y, collisionRadius)
         ctx.save();
         
         ctx.fillstyle = "black";
-        ctx.fillRect(sx-25,sy-50,50,50);
-
+        if(this.movement != MOVEMENT.CROUCHING){
+	        ctx.fillRect(sx-25,sy-50,50,50);
+	    }
+	    else
+	    {
+	    	ctx.fillRect(sx-25,sy-25,50,25);
+	    }
 
         ctx.restore();
     };
