@@ -114,14 +114,42 @@ function update() {
 }
 function drawTrain(x,y,cx,cy)
 {
+	var trainWidth = 1000;
+	var trainHeight = 200;
+	var wheelRadius = 20;
+	var wheelSpacing = 300;
 	var sx = x - cx + (ctx.canvas.width/2);
     var sy = y - cy + (ctx.canvas.height/2);
 
 	ctx.save();
-
-	ctx.fillStyle = "white";
+	
+	//Train Car (Brown Background)
+	var trainBackgroundGradient = ctx.createLinearGradient(sx, sy-trainHeight, sx, sy);
+	trainBackgroundGradient.addColorStop(0, "#2b1d0e");
+	trainBackgroundGradient.addColorStop(1, "#8b5d2e");
+	ctx.fillStyle = trainBackgroundGradient;
 	ctx.fillRect(sx,sy-200,1000,200);
+	
+	//Train Wheels
+	var trainWheelGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, wheelRadius);
+	trainWheelGradient.addColorStop(0, "#333333");
+	trainWheelGradient.addColorStop(1, "#000000");
+	ctx.fillStyle = trainWheelGradient;
+	ctx.save();
+	ctx.translate(sx+wheelRadius, sy+wheelRadius);
+	for(var i = wheelRadius; i < trainWidth; i += wheelSpacing)
+	{
+		ctx.beginPath();
+		ctx.arc(0, 0, wheelRadius, 0, Math.PI*2, false);
+		ctx.closePath();
+		ctx.fill();
+		ctx.translate(wheelSpacing, 0);
+	}
+	ctx.restore();
 
+	//Train Rail
+	ctx.fillStyle = "#ffffff";
+	ctx.fillRect(0, sy+wheelRadius*1.9, ctx.canvas.width, 5);
 	ctx.restore();
 }
 function draw() {
