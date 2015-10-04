@@ -25,45 +25,49 @@ addEventListener("keyup", function (e)
 }, false);
 
 function input() {
-	if ( keys[87] && !oldKeys[87]) {    //W
-		//console.log('W');
-	}
-
-	if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
-	{
-		//  Do nothing when pushing both diretions
-		player.movement = MOVEMENT.STANDING;
-	}
-	else if (keys[68] ) {   // D
-		//console.log('D');
-		player.facing = FACING.RIGHT;
-		player.movement = MOVEMENT.WALKING;
-	}
-
-	else if ( keys[65] ) {    //A
-		//console.log('A');
-		player.facing = FACING.LEFT;
-		player.movement = MOVEMENT.WALKING;
-	}
 	if ( keys [83] ) {    //S
 		//console.log('S');
 		//Slide
+		player.movement = MOVEMENT.CROUCHING;
 	}
-	if ( keys [32] ) {    //Space
-		//console.log('Space');
-		// Bullet
-		if(player.canShoot){
-			var b = new Bullet(0,player.movable.px,player.movable.py,30);
-			b.facing = player.facing;
-			bullets.push(b);
-			player.canShoot = false;
+
+	else {
+
+		if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
+		{
+			//  Do nothing when pushing both diretions
+			player.movement = MOVEMENT.STANDING;
+		}
+		else if (keys[68] ) {   // D
+			//console.log('D');
+			player.facing = FACING.RIGHT;
+			player.movement = MOVEMENT.WALKING;
 		}
 
+		else if ( keys[65] ) {    //A
+			//console.log('A');
+			player.facing = FACING.LEFT;
+			player.movement = MOVEMENT.WALKING;
+		}
+
+	
+		if ( keys [32] ) {    //Space
+			//console.log('Space');
+			// Bullet
+			if(player.canShoot){
+				var b = new Bullet(0,player.movable.px,player.movable.py-35,30);
+				b.facing = player.facing;
+				bullets.push(b);
+				player.canShoot = false;
+			}
+
+		}
+		if ( keys [16] ) {    //Shift
+			//console.log('Shift');
+			//  Run
+		}
 	}
-	if ( keys [16] ) {    //Shift
-		//console.log('Shift');
-		//  Run
-	}
+
 
 }
 
@@ -71,7 +75,7 @@ var player = new Person(10,10,50);
 var enemy = new Enemy(350,10,50);
 var cover1 = new Cover(200,10,40);
 var cover2 = new Cover(500,10,40);
-//var environment = new Environment(ctx.canvas.width, ctx.canvas.height);
+var lastTime = (+new Date);
 
 var bullets = new Array();
 
@@ -84,6 +88,13 @@ function init() {
 }
 
 function update() {
+	//Calculating dt
+	var now,fps, dt;
+	now = (+new Date); 
+	fps = 1000 / (now - lastTime);
+	lastTime = now; 
+	dt = 1/fps;
+	
 	
 	//  Update code
 	// for(var t  = 0 ; t < things.length; t++)
@@ -93,14 +104,25 @@ function update() {
 	// }
 
 	input();
-	player.update(0.025);
-	enemy.update(0.025);
+	player.update(dt);
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
-		bullets[i].update(0.025);
+		bullets[i].update(dt);
 	};
 
 	oldKeys = $.extend( {}, keys );
+}
+function drawTrain(x,y,cx,cy)
+{
+	var sx = x - cx + (ctx.canvas.width/2);
+    var sy = y - cy + (ctx.canvas.height/2);
+
+	ctx.save();
+
+	ctx.fillStyle = "white";
+	ctx.fillRect(sx,sy-200,1000,200);
+
+	ctx.restore();
 }
 function draw() {
 	
