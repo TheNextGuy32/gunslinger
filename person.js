@@ -1,6 +1,6 @@
 var FACING =  
 {
-	LEFT:0,
+	LEFT:-1,
 	RIGHT:1	
 }
 
