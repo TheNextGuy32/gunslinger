@@ -25,45 +25,49 @@ addEventListener("keyup", function (e)
 }, false);
 
 function input() {
-	if ( keys[87] && !oldKeys[87]) {    //W
-		//console.log('W');
-	}
-
-	if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
-	{
-		//  Do nothing when pushing both diretions
-		player.movement = MOVEMENT.STANDING;
-	}
-	else if (keys[68] ) {   // D
-		//console.log('D');
-		player.facing = FACING.RIGHT;
-		player.movement = MOVEMENT.WALKING;
-	}
-
-	else if ( keys[65] ) {    //A
-		//console.log('A');
-		player.facing = FACING.LEFT;
-		player.movement = MOVEMENT.WALKING;
-	}
 	if ( keys [83] ) {    //S
 		//console.log('S');
 		//Slide
+		player.movement = MOVEMENT.CROUCHING;
 	}
-	if ( keys [32] ) {    //Space
-		//console.log('Space');
-		// Bullet
-		if(player.canShoot){
-			var b = new Bullet(0,player.movable.px,player.movable.py-35,30);
-			b.facing = player.facing;
-			bullets.push(b);
-			player.canShoot = false;
+
+	else {
+
+		if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
+		{
+			//  Do nothing when pushing both diretions
+			player.movement = MOVEMENT.STANDING;
+		}
+		else if (keys[68] ) {   // D
+			//console.log('D');
+			player.facing = FACING.RIGHT;
+			player.movement = MOVEMENT.WALKING;
 		}
 
+		else if ( keys[65] ) {    //A
+			//console.log('A');
+			player.facing = FACING.LEFT;
+			player.movement = MOVEMENT.WALKING;
+		}
+
+	
+		if ( keys [32] ) {    //Space
+			//console.log('Space');
+			// Bullet
+			if(player.canShoot){
+				var b = new Bullet(0,player.movable.px,player.movable.py-35,30);
+				b.facing = player.facing;
+				bullets.push(b);
+				player.canShoot = false;
+			}
+
+		}
+		if ( keys [16] ) {    //Shift
+			//console.log('Shift');
+			//  Run
+		}
 	}
-	if ( keys [16] ) {    //Shift
-		//console.log('Shift');
-		//  Run
-	}
+
 
 }
 
