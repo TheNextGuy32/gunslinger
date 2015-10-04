@@ -15,8 +15,6 @@ function Thing (worldX, worldY, radius)
 
     this.mass = 0;
 
-    
-
     this.applyForce= function (force, radianDirection)
     {
 

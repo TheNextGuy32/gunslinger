@@ -1,0 +1,9 @@
+{
+	"traincars" : {
+		"1" : { 
+			"bg" : "",
+			"coverObjs" : [],
+			"enemies" : []		
+		}
+	}
+}

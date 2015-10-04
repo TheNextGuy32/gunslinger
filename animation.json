@@ -1,0 +1,20 @@
+{
+	"player" : {
+		"idle" : { 
+			"fps" : 24,
+			"frames" : [0,1,1,1,2],
+			"durations" : [],
+			"ratio" : [0.5,1],
+			"coords" : [0,0],
+			"dimensions" : [100,100]
+		},
+		"walk" : { 
+			"fps" : 24,
+			"frames" : [0,1,1,1,2],
+			"durations" : [],
+			"ratio" : [0.5,1],
+			"coords" : [0,0],
+			"dimensions" : [100,100]
+		}
+	}
+}
