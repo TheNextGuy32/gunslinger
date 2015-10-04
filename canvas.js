@@ -32,33 +32,34 @@ function input() {
 	if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
 	{
 		//  Do nothing when pushing both diretions
-		player.movement = MOVEMENT.STANDING;
+		environment.getPlayer().movement = MOVEMENT.STANDING;
 	}
 	else if (keys[68] ) {   // D
 		//console.log('D');
-		player.facing = FACING.RIGHT;
-		player.movement = MOVEMENT.WALKING;
+		environment.getPlayer().facing = FACING.RIGHT;
+		environment.getPlayer().movement = MOVEMENT.WALKING;
 	}
 
 	else if ( keys[65] ) {    //A
 		//console.log('A');
-		player.facing = FACING.LEFT;
-		player.movement = MOVEMENT.WALKING;
+		environment.getPlayer().facing = FACING.LEFT;
+		environment.getPlayer().movement = MOVEMENT.WALKING;
 	}
 	if ( keys [83] ) {    //S
 		//console.log('S');
 	}
 }
 
-var player = new Person(10,10,50);
-
+var environment = new Environment(ctx.canvas.width, ctx.canvas.height);
 var camX = 0;
 var camY = 0;
 
 function init() {
-
 	//  Initialization code
-
+	
+	var player = new Person(10,10,50);
+	environment.init(player);
+	
 	animFrame( recursiveAnim );
 }
 
@@ -76,7 +77,8 @@ function update() {
 	// }
 
 	input();
-	player.update(0.025);
+	environment.update(0.025);
+//	player.update(0.025);
 
 	//  Maintain camera
 	//camX = cena.worldX;
@@ -92,9 +94,10 @@ function draw() {
 	ctx.fillRect(0,0,canvas.width,canvas.height);
 	ctx.restore();
 
-	//camX = player.movable.px;
+	camX = environment.getPlayer().movable.px;
 	//camY = player.movable.py;
-	player.render(ctx,camX,camY);
+	environment.render(ctx, camX, camY);
+//	player.render(ctx,camX,camY);
 	
 }
 
