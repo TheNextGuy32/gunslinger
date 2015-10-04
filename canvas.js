@@ -110,8 +110,19 @@ function update() {
 
 	oldKeys = $.extend( {}, keys );
 }
+function drawTrain(x,y,cx,cy)
+{
+	var sx = x - cx + (ctx.canvas.width/2);
+    var sy = y - cy + (ctx.canvas.height/2);
+
+	ctx.save();
+
+	ctx.fillStyle = "white";
+	ctx.fillRect(sx,sy-200,1000,200);
+
+	ctx.restore();
+}
 function draw() {
-	
 	
 	ctx.save();
 	ctx.fillStyle = 'gray';
@@ -121,6 +132,8 @@ function draw() {
 	camX = player.movable.px;
 	camY = player.movable.py;
 	
+	drawTrain(-40,10,camX,camY);
+
 	player.render(ctx,camX,camY);
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
