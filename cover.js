@@ -1,37 +1,31 @@
 "use strict";
-function Cover (xPos, yPos, width, height) 
-{
+function Cover (xPos, yPos, width, height, collisionRadius) {
 //properties
 	this.snapRadius = 50;
-	this.movable = new Movable();
-	
+	this.xPos = xPos;
+	this.yPos = yPos;
+	this.width = width;
+	this.height = height;
+	this.collisionRadius = collisionRadius;
+	this.movable = new Movable(xPos,yPos,10);
+	this.animation = new Animation(xPos,yPos,10);
 //functions
-	this.init = function(num, xPos, yPos, height,width){
-		var c = {};
-		c.x = xPos;
-		c.y = yPos;
-		c.width = width;
-		c.height = height;
-		c.fillStyle = "blue";
-		Object.seal(c);
+	this.knockOver = function(){
+		//handles tipping cover into tipped state
 	};
-	this.draw = function(ctx){
-		ctx.save();
-		ctx.beginPath();
-		ctx.rect(this.x,this.y,this.height,this.width);
-		ctx.closePath();
-		ctx.fillStyle = this.fillStyle;
-		ctx.fill();
-		ctx.restore();
-	}
-	this.checkForCollisions = function(){
-		
-		//bullet - destroy bullet
-		//person in snapRadius and input = snap
+	this.pickUp = function(){
+		//handles changing properties to standard state
 	};
-	
-	this.update = function(){
-		
-	};
+	//draws cover
+	this.render = function(ctx,cx,cy,covWidth,covHeight){
+    	//console.log("Pos: " + sx+", " + sy);
+        var sx = this.movable.px - cx + (ctx.canvas.width/2);
+        var sy = this.movable.py - cy + (ctx.canvas.height/2);
+      
+        ctx.save();
+        ctx.fillStyle = "blue";
+        ctx.fillRect(sx-(covWidth/2),sy-covHeight,covWidth,covHeight);
+        ctx.restore();
+    };
 	
 }

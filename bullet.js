@@ -1,57 +1,24 @@
-var FACING =  
-{
-	LEFT:-1,
-	RIGHT:1	
-}
 
-var MOVEMENT =  
-{
-	STANDING:0,
-	WALKING: 1,
-	RUNNING: 2,
-	SLIDING: 3
-}
 
-var walkSpeed = 50;
-var runSpeed = 100;
+var bulletSpeed = 500;
 
-function Person(x, y, collisionRadius) 
+function Bullet(factionID, x, y, collisionRadius) 
 {
+	this.id = factionID;
 	this.movable = new Movable(x,y,10);
 	this.animation = new Animation(x,y,10);
 
 	this.facing = FACING.LEFT;
-	this.movement = MOVEMENT.STANDING;
-
-	this.canShoot = true;
-	this.shootCooldown = 1;
-	this.shootTimer = 0;
 
 	this.update = function(dt)
 	{
-		if(!this.canShoot){
-			this.shootTimer += dt;
-			if(this.shootTimer > this.shootCooldown)
-			{
-				this.canShoot = true;
-				this.shootTimer = 0;
-			}
-		}
-
 		//  Movable updating
-		var velocity = 0;
-		if(this.movement == MOVEMENT.WALKING || this.movement == MOVEMENT.SLIDING )
-		{
-			velocity = walkSpeed;			
-		}
-		else if(this.movement == MOVEMENT.RUNNING)
-		{
-			velocity = runSpeed;
-		}
+		var velocity = bulletSpeed;
 		if(this.facing == FACING.LEFT)
 		{
 			velocity = -velocity;
 		}
+
 		this.movable.vx = velocity;
 
 		this.movable.update(dt);
@@ -72,7 +39,7 @@ function Person(x, y, collisionRadius)
         ctx.save();
         
         ctx.fillstyle = "black";
-        ctx.fillRect(sx-25,sy-50,50,50);
+        ctx.fillRect(sx-2.5,sy-2.5,5,5);
 
 
         ctx.restore();
