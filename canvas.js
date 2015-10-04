@@ -47,10 +47,29 @@ function input() {
 	}
 	if ( keys [83] ) {    //S
 		//console.log('S');
+		//Slide
 	}
+	if ( keys [32] ) {    //Space
+		//console.log('Space');
+		// Bullet
+		if(player.canShoot){
+			var b = new Bullet(0,player.movable.px,player.movable.py,30);
+			b.facing = player.facing;
+			bullets.push(b);
+			player.canShoot = false;
+		}
+
+	}
+	if ( keys [16] ) {    //Shift
+		//console.log('Shift');
+		//  Run
+	}
+
 }
 
 var player = new Person(10,10,50);
+
+var bullets = new Array();
 
 var camX = 0;
 var camY = 0;
@@ -77,6 +96,9 @@ function update() {
 
 	input();
 	player.update(0.025);
+	for (var i = bullets.length - 1; i >= 0; i--) {
+		bullets[i].update(0.025);
+	};
 
 	//  Maintain camera
 	//camX = cena.worldX;
@@ -95,6 +117,10 @@ function draw() {
 	//camX = player.movable.px;
 	//camY = player.movable.py;
 	player.render(ctx,camX,camY);
+
+	for (var i = bullets.length - 1; i >= 0; i--) {
+		bullets[i].render(ctx,camX,camY);
+	};
 	
 }
 

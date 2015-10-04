@@ -23,8 +23,21 @@ function Person(x, y, collisionRadius)
 	this.facing = FACING.LEFT;
 	this.movement = MOVEMENT.STANDING;
 
+	this.canShoot = true;
+	this.shootCooldown = 1;
+	this.shootTimer = 0;
+
 	this.update = function(dt)
 	{
+		if(!this.canShoot){
+			this.shootTimer += dt;
+			if(this.shootTimer > this.shootCooldown)
+			{
+				this.canShoot = true;
+				this.shootTimer = 0;
+			}
+		}
+
 		//  Movable updating
 		var velocity = 0;
 		if(this.movement == MOVEMENT.WALKING || this.movement == MOVEMENT.SLIDING )
@@ -59,7 +72,7 @@ function Person(x, y, collisionRadius)
         ctx.save();
         
         ctx.fillstyle = "black";
-        ctx.fillRect(sx,sy,50,50);
+        ctx.fillRect(sx-25,sy-50,50,50);
 
 
         ctx.restore();
