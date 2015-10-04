@@ -53,12 +53,12 @@ function input() {
 var player = new Person(10,10,50);
 var cover1 = new Cover(200,10,40);
 var cover2 = new Cover(500,10,40);
+//var environment = new Environment(ctx.canvas.width, ctx.canvas.height);
+
 var camX = 0;
 var camY = 0;
 
 function init() {
-
-	//  Initialization code
 
 	animFrame( recursiveAnim );
 }
@@ -70,24 +70,16 @@ function update() {
 	// {
 	// 	things[t].accelerationX = 0;
 	// 	things[t].accelerationY = 0;
-
-	// 	//  Handle velocity
-
-	// 	//  Handle position
 	// }
 
 	input();
 	player.update(0.025);
+	//environment.update(0.025);
 	
-	//  Maintain camera
-	//camX = cena.worldX;
-	//camY = cena.worldY;
 	oldKeys = $.extend( {}, keys );
 }
 function draw() {
 	
-	//  Draw code
-
 	ctx.save();
 	ctx.fillStyle = 'gray';
 	ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -95,14 +87,13 @@ function draw() {
 
 	camX = player.movable.px;
 	camY = player.movable.py;
+	
+	//environment.render(ctx, camX, camY);
+	
 	player.render(ctx,camX,camY);
 	cover1.render(ctx,camX,camY,40,30);
 	cover2.render(ctx,camX,camY,40,80);
 }
-
-
-
-
 
 window.onload = init;
 var animFrame = 
