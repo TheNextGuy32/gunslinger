@@ -51,7 +51,8 @@ function input() {
 }
 
 var player = new Person(10,10,50);
-
+var cover1 = new Cover(200,10,40);
+var cover2 = new Cover(500,10,40);
 var camX = 0;
 var camY = 0;
 
@@ -77,7 +78,7 @@ function update() {
 
 	input();
 	player.update(0.025);
-
+	
 	//  Maintain camera
 	//camX = cena.worldX;
 	//camY = cena.worldY;
@@ -92,10 +93,11 @@ function draw() {
 	ctx.fillRect(0,0,canvas.width,canvas.height);
 	ctx.restore();
 
-	//camX = player.movable.px;
-	//camY = player.movable.py;
+	camX = player.movable.px;
+	camY = player.movable.py;
 	player.render(ctx,camX,camY);
-	
+	cover1.render(ctx,camX,camY,40,30);
+	cover2.render(ctx,camX,camY,40,80);
 }
 
 

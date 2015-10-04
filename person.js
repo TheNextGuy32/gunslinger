@@ -17,7 +17,7 @@ var runSpeed = 100;
 
 function Person(x, y, collisionRadius) 
 {
-	this.movable = new Movable(10,10,10);
+	this.movable = new Movable(x,y,10);
 	this.animation = new Animation(x,y,10);
 
 	this.facing = FACING.LEFT;
