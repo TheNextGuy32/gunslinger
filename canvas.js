@@ -70,7 +70,7 @@ function input() {
 var player = new Person(10,10,50);
 var cover1 = new Cover(200,10,40);
 var cover2 = new Cover(500,10,40);
-//var environment = new Environment(ctx.canvas.width, ctx.canvas.height);
+var lastTime = (+new Date);
 
 var bullets = new Array();
 
@@ -83,6 +83,13 @@ function init() {
 }
 
 function update() {
+	//Calculating dt
+	var now,fps, dt;
+	now = (+new Date); 
+	fps = 1000 / (now - lastTime);
+	lastTime = now; 
+	dt = 1/fps;
+	
 	
 	//  Update code
 	// for(var t  = 0 ; t < things.length; t++)
@@ -92,15 +99,16 @@ function update() {
 	// }
 
 	input();
-	player.update(0.025);
+	player.update(dt);
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
-		bullets[i].update(0.025);
+		bullets[i].update(dt);
 	};
 
 	oldKeys = $.extend( {}, keys );
 }
 function draw() {
+	
 	
 	ctx.save();
 	ctx.fillStyle = 'gray';
