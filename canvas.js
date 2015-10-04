@@ -162,6 +162,8 @@ function draw() {
 	camX = player.movable.px;
 	camY = player.movable.py;
 	
+	drawTrain(-40,10,camX,camY);
+	
 	player.render(ctx,camX,camY);
 	enemy.render(ctx,camX,camY);
 

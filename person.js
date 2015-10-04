@@ -44,7 +44,7 @@ function Person(x, y, collisionRadius)
 	
 	this.update = function(dt)
 	{
-		this.updateShoot();
+		this.updateShoot(dt);
 
 		//  Movable updating
 		var velocity = 0;
