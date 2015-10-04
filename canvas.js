@@ -83,10 +83,6 @@ function draw() {
 	
 }
 
-
-
-
-
 window.onload = init;
 var animFrame = 
 	window.requestAnimationFrame   			
