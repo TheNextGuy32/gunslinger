@@ -53,7 +53,7 @@ function input() {
 		//console.log('Space');
 		// Bullet
 		if(player.canShoot){
-			var b = new Bullet(0,player.movable.px,player.movable.py,30);
+			var b = new Bullet(0,player.movable.px,player.movable.py-35,30);
 			b.facing = player.facing;
 			bullets.push(b);
 			player.canShoot = false;
