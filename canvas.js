@@ -68,6 +68,7 @@ function input() {
 }
 
 var player = new Person(10,10,50);
+var enemy = new Enemy(350,10,50);
 var cover1 = new Cover(200,10,40);
 var cover2 = new Cover(500,10,40);
 //var environment = new Environment(ctx.canvas.width, ctx.canvas.height);
@@ -93,6 +94,7 @@ function update() {
 
 	input();
 	player.update(0.025);
+	enemy.update(0.025);
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		bullets[i].update(0.025);
@@ -111,6 +113,7 @@ function draw() {
 	camY = player.movable.py;
 	
 	player.render(ctx,camX,camY);
+	enemy.render(ctx,camX,camY);
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		bullets[i].render(ctx,camX,camY);
