@@ -26,21 +26,31 @@ addEventListener("keyup", function (e)
 
 function input() {
 	if ( keys[87] && !oldKeys[87]) {    //W
-		console.log('W');
+		//console.log('W');
+	}
+
+	if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
+	{
+		//  Do nothing when pushing both diretions
+		player.movement = MOVEMENT.STANDING;
 	}
 	else if (keys[68] ) {   // D
-		console.log('D');
+		//console.log('D');
+		player.facing = FACING.RIGHT;
+		player.movement = MOVEMENT.WALKING;
 	}
 
 	else if ( keys[65] ) {    //A
-		console.log('A');
+		//console.log('A');
+		player.facing = FACING.LEFT;
+		player.movement = MOVEMENT.WALKING;
 	}
 	if ( keys [83] ) {    //S
-		console.log('S');
+		//console.log('S');
 	}
 }
 
-var things = new Array();
+var player = new Person(10,10,50);
 
 var camX = 0;
 var camY = 0;
@@ -55,17 +65,18 @@ function init() {
 function update() {
 	
 	//  Update code
-	for(var t  = 0 ; t < things.length; t++)
-	{
-		things[t].accelerationX = 0;
-		things[t].accelerationY = 0;
+	// for(var t  = 0 ; t < things.length; t++)
+	// {
+	// 	things[t].accelerationX = 0;
+	// 	things[t].accelerationY = 0;
 
-		//  Handle velocity
+	// 	//  Handle velocity
 
-		//  Handle position
-	}
+	// 	//  Handle position
+	// }
 
 	input();
+	player.update(0.025);
 
 	//  Maintain camera
 	//camX = cena.worldX;
@@ -80,6 +91,10 @@ function draw() {
 	ctx.fillStyle = 'gray';
 	ctx.fillRect(0,0,canvas.width,canvas.height);
 	ctx.restore();
+
+	//camX = player.movable.px;
+	//camY = player.movable.py;
+	player.render(ctx,camX,camY);
 	
 }
 
