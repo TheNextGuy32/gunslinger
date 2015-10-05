@@ -140,6 +140,7 @@ function update() {
 
 	input();
 	player.update(dt);
+	player.movable.px = Math.max(-15, Math.min(935, player.movable.px));
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		bullets[i].update(dt);
