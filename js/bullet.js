@@ -32,6 +32,15 @@ function Bullet(factionID, x, y, collisionRadius)
 		this.animation.update(dt);
 	};
 
+	this.getCollisionRectangle = function()
+	{
+		return {
+	        	x:this.movable.px-2.5,
+	        	y:this.movable.py-2.5,
+	        	w:5,
+	        	h:5};
+	}
+
     this.render = function(ctx,cx,cy)
     {
     	//console.log("Pos: " + sx+", " + sy);

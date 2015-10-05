@@ -73,6 +73,25 @@ function Person(x, y, collisionRadius)
 		this.animation.update(dt);
 	};
 
+	this.getCollisionRectangle = function()
+	{
+		if(this.movement != MOVEMENT.CROUCHING){
+	        return {
+	        	x:this.movable.px-25,
+	        	y:this.movable.py-50,
+	        	w:50,
+	        	h:50};
+	    }
+	    else
+	    {
+	    	return {
+	        	x:this.movable.px-25,
+	        	y:this.movable.py-25,
+	        	w:50,
+	        	h:50};
+	    }
+	}
+
     this.render = function(ctx,cx,cy)
     {
     	//console.log("Pos: " + sx+", " + sy);

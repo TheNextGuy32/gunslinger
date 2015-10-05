@@ -10,6 +10,15 @@ function Cover (xPos, yPos, width, height, collisionRadius) {
 	this.movable = new Movable(xPos,yPos,10);
 	this.animation = new Animation(xPos,yPos,10);
 
+	this.getCollisionRectangle = function()
+	{
+		return {
+	        	x:this.movable.px- (this.w/2),
+	        	y:this.movable.py- (this.h),
+	        	w:this.w,
+	        	h:this.h};
+	}
+
 //functions
 	this.knockOver = function(){
 		//handles tipping cover into tipped state

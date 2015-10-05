@@ -78,7 +78,9 @@ cover.push(new Cover(200,10,30,30,40));//xPos, yPos, width, height, collisionRad
 cover.push(new Cover(500,10,30,80,40));
 
 var enemies = new Array();
-enemies.push(new Enemy(50,10,50));
+// enemies.push(new Enemy(400,10,50));
+// enemies.push(new Enemy(450,10,50));
+enemies.push(new Enemy(500,10,50));
 
 var bullets = new Array();
 
@@ -91,7 +93,13 @@ function init() {
 
 	animFrame( recursiveAnim );
 }
-
+function doRectanglesOverlap(r1, r2)
+{
+	return !(r2.x > r1.x + r1.w || 
+           r2.x+r2.w < r1.x || 
+           r2.y > r1.y + r1.h ||
+           r2.y + r2.h < r1.y);
+}
 function update() {
 	//Calculating dt
 	var now,fps, dt;
@@ -101,28 +109,34 @@ function update() {
 	dt = 1/fps;
 	
 	
-	// for (var i = bullets.length - 1; i >= 0; i--) {
-	// 	if(bullets[i].id == 1){
-	// 		//  Enemy killing player
-	// 		if(Math.abs(bullets[i].x - player.x) < (bullets[i].r/2) + (player.r/2))
-	// 		{
-	// 			console.log("Player!");
-	// 		}
-	// 	}
-	// 	else{
-	// 		//  Player killing enemy
-	// 		// for loop through enemies
-	// 	}
+	for (var b = 0; b < bullets.length ; b++) {
+		if(bullets[b].id == 1){
+			//  Enemy killing player
+			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),player.getCollisionRectangle()))
+			{
+				console.log("Player");
+			}
+		}
+		else{
+			//  Player killing enemy
+			// for loop through enemies
+			for(var e = 0 ; e < enemies.length ; e++)
+			{
+				if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),enemies[e].getCollisionRectangle()))
+				{
+					console.log("Enemy");
+				}
+			}
+		}
 
-	// 	//  Colliding with cover
-	// 	for (var c =0 ; c < cover.length; c++) {
-	// 		if(Math.abs(bullets[i].x - cover[q].x) < 
-	// 			(bullets[i].r/2) + (cover[q].r/2))
-	// 		{
-	// 			console.log("cOVER!");
-	// 		}
-	// 	};
-	// };
+		//  Colliding with cover
+		for (var c =0 ; c < cover.length; c++) {
+			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),cover[c].getCollisionRectangle()))
+				{
+					console.log("cover");
+				}
+		};
+	};
 
 	input();
 	player.update(dt);
