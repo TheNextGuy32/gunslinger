@@ -72,11 +72,14 @@ function input() {
 }
 
 var player = new Person(10,10,50);
-var cover1 = new Cover(200,10,40);
-var cover2 = new Cover(500,10,40);
-var lastTime = (+new Date);
+
+var cover = new Array();
+cover.push(new Cover(200,10,30,30,40));//xPos, yPos, width, height, collisionRadius
+cover.push(new Cover(500,10,30,80,40));
 
 var bullets = new Array();
+
+var lastTime = (+new Date);
 
 var camX = 0;
 var camY = 0;
@@ -95,12 +98,28 @@ function update() {
 	dt = 1/fps;
 	
 	
-	//  Update code
-	// for(var t  = 0 ; t < things.length; t++)
-	// {
-	// 	things[t].accelerationX = 0;
-	// 	things[t].accelerationY = 0;
-	// }
+	// for (var i = bullets.length - 1; i >= 0; i--) {
+	// 	if(bullets[i].id == 1){
+	// 		//  Enemy killing player
+	// 		if(Math.abs(bullets[i].x - player.x) < (bullets[i].r/2) + (player.r/2))
+	// 		{
+	// 			console.log("Player!");
+	// 		}
+	// 	}
+	// 	else{
+	// 		//  Player killing enemy
+	// 		// for loop through enemies
+	// 	}
+
+	// 	//  Colliding with cover
+	// 	for (var c =0 ; c < cover.length; c++) {
+	// 		if(Math.abs(bullets[i].x - cover[q].x) < 
+	// 			(bullets[i].r/2) + (cover[q].r/2))
+	// 		{
+	// 			console.log("cOVER!");
+	// 		}
+	// 	};
+	// };
 
 	input();
 	player.update(dt);
@@ -140,9 +159,10 @@ function draw() {
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		bullets[i].render(ctx,camX,camY);
 	};
-		
-	cover1.render(ctx,camX,camY,40,30);
-	cover2.render(ctx,camX,camY,40,80);
+	
+	for (var i = cover.length - 1; i >= 0; i--) {
+		cover[i].render(ctx,camX,camY);
+	};
 }
 
 window.onload = init;

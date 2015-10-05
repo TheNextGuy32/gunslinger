@@ -4,11 +4,12 @@ function Cover (xPos, yPos, width, height, collisionRadius) {
 	this.snapRadius = 50;
 	this.xPos = xPos;
 	this.yPos = yPos;
-	this.width = width;
-	this.height = height;
+	this.w = width;
+	this.h = height;
 	this.collisionRadius = collisionRadius;
 	this.movable = new Movable(xPos,yPos,10);
 	this.animation = new Animation(xPos,yPos,10);
+
 //functions
 	this.knockOver = function(){
 		//handles tipping cover into tipped state
@@ -17,14 +18,14 @@ function Cover (xPos, yPos, width, height, collisionRadius) {
 		//handles changing properties to standard state
 	};
 	//draws cover
-	this.render = function(ctx,cx,cy,covWidth,covHeight){
+	this.render = function(ctx,cx,cy){
     	//console.log("Pos: " + sx+", " + sy);
         var sx = this.movable.px - cx + (ctx.canvas.width/2);
         var sy = this.movable.py - cy + (ctx.canvas.height/2);
       
         ctx.save();
         ctx.fillStyle = "blue";
-        ctx.fillRect(sx-(covWidth/2),sy-covHeight,covWidth,covHeight);
+        ctx.fillRect(sx-(this.w/2),sy-this.h,this.w,this.h);
         ctx.restore();
     };
 	

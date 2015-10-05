@@ -10,6 +10,8 @@ function Bullet(factionID, x, y, collisionRadius)
 
 	this.facing = FACING.LEFT;
 
+	this.r = collisionRadius;
+
 	this.update = function(dt)
 	{
 		//  Movable updating

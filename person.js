@@ -28,6 +28,8 @@ function Person(x, y, collisionRadius)
 	this.shootCooldown = 1;
 	this.shootTimer = 0;
 
+	this.r = collisionRadius;
+
 	this.update = function(dt)
 	{
 		if(!this.canShoot){
