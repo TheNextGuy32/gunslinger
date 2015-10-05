@@ -13,8 +13,8 @@ var MOVEMENT =
 	CROUCHING: 4
 }
 
-var walkSpeed = 50;
-var runSpeed = 100;
+var walkSpeed = 200;
+var runSpeed = 300;
 
 function Person(x, y, collisionRadius) 
 {
@@ -27,11 +27,13 @@ function Person(x, y, collisionRadius)
 	this.canShoot = true;
 	this.shootCooldown = 1;
 	this.shootTimer = 0;
+	this.firing = false;
+	
+	this.fillStyle = "black";
 
 	this.r = collisionRadius;
 
-	this.update = function(dt)
-	{
+	this.updateShoot = function(dt) {
 		if(!this.canShoot){
 			this.shootTimer += dt;
 			if(this.shootTimer > this.shootCooldown)
@@ -40,6 +42,11 @@ function Person(x, y, collisionRadius)
 				this.shootTimer = 0;
 			}
 		}
+	}
+	
+	this.update = function(dt)
+	{
+		this.updateShoot(dt);
 
 		//  Movable updating
 		var velocity = 0;
@@ -74,7 +81,7 @@ function Person(x, y, collisionRadius)
         
         ctx.save();
         
-        ctx.fillstyle = "black";
+        ctx.fillStyle = this.fillStyle;
         if(this.movement != MOVEMENT.CROUCHING){
 	        ctx.fillRect(sx-25,sy-50,50,50);
 	    }

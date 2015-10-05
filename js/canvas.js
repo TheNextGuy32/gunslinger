@@ -77,6 +77,9 @@ var cover = new Array();
 cover.push(new Cover(200,10,30,30,40));//xPos, yPos, width, height, collisionRadius
 cover.push(new Cover(500,10,30,80,40));
 
+var enemies = new Array();
+enemies.push(new Enemy(50,10,50));
+
 var bullets = new Array();
 
 var lastTime = (+new Date);
@@ -128,18 +131,50 @@ function update() {
 		bullets[i].update(dt);
 	};
 
+	for(var e = 0 ; e < enemies.length; e++){
+		enemies[e].update(dt);
+	}
+
 	oldKeys = $.extend( {}, keys );
 }
 function drawTrain(x,y,cx,cy)
 {
+	var trainWidth = 1000;
+	var trainHeight = 200;
+	var wheelRadius = 20;
+	var wheelSpacing = 300;
 	var sx = x - cx + (ctx.canvas.width/2);
     var sy = y - cy + (ctx.canvas.height/2);
 
 	ctx.save();
-
-	ctx.fillStyle = "white";
+	
+	//Train Car (Brown Background)
+	var trainBackgroundGradient = ctx.createLinearGradient(sx, sy-trainHeight, sx, sy);
+	trainBackgroundGradient.addColorStop(0, "#2b1d0e");
+	trainBackgroundGradient.addColorStop(1, "#8b5d2e");
+	ctx.fillStyle = trainBackgroundGradient;
 	ctx.fillRect(sx,sy-200,1000,200);
+	
+	//Train Wheels
+	var trainWheelGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, wheelRadius);
+	trainWheelGradient.addColorStop(0, "#333333");
+	trainWheelGradient.addColorStop(1, "#000000");
+	ctx.fillStyle = trainWheelGradient;
+	ctx.save();
+	ctx.translate(sx+wheelRadius, sy+wheelRadius);
+	for(var i = wheelRadius; i < trainWidth; i += wheelSpacing)
+	{
+		ctx.beginPath();
+		ctx.arc(0, 0, wheelRadius, 0, Math.PI*2, false);
+		ctx.closePath();
+		ctx.fill();
+		ctx.translate(wheelSpacing, 0);
+	}
+	ctx.restore();
 
+	//Train Rail
+	ctx.fillStyle = "#ffffff";
+	ctx.fillRect(0, sy+wheelRadius*1.9, ctx.canvas.width, 5);
 	ctx.restore();
 }
 function draw() {
@@ -153,8 +188,12 @@ function draw() {
 	camY = player.movable.py;
 	
 	drawTrain(-40,10,camX,camY);
-
+	
 	player.render(ctx,camX,camY);
+	
+	for(var e = 0 ; e < enemies.length; e++){
+		enemies[e].render(ctx,camX,camY);
+	}
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		bullets[i].render(ctx,camX,camY);
