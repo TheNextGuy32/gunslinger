@@ -35,7 +35,7 @@ addEventListener("mousedown",function(e) {
 		//good job me
 		//tbd
 		var vx = mouse.x - worldToScreen(player.movable.px,camX,ctx.canvas.width);
-		var vy = mouse.y - worldToScreen(player.movable.py,camY,ctx.canvas.height);
+		var vy = mouse.y - worldToScreen(player.movable.py-35,camY,ctx.canvas.height);
 		var mag = Math.sqrt(vx * vx + vy * vy);
 		vx *= 500 / mag;
 		vy *= 500 / mag;
