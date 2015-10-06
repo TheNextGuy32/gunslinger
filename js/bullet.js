@@ -2,26 +2,19 @@
 
 var bulletSpeed = 500;
 
-function Bullet(factionID, x, y, collisionRadius) 
+function Bullet(factionID, x, y, vx, vy, collisionRadius) 
 {
 	this.id = factionID;
 	this.movable = new Movable(x,y,10);
+	this.movable.vx = vx;
+	this.movable.vy = vy;
 	this.animation = new Animation(x,y,10);
-
-	this.facing = FACING.LEFT;
-
+	
 	this.r = collisionRadius;
 
 	this.update = function(dt)
 	{
 		//  Movable updating
-		var velocity = bulletSpeed;
-		if(this.facing == FACING.LEFT)
-		{
-			velocity = -velocity;
-		}
-
-		this.movable.vx = velocity;
 
 		this.movable.update(dt);
 

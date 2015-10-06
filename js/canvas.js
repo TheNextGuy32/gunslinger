@@ -24,6 +24,28 @@ addEventListener("keyup", function (e)
 
 }, false);
 
+addEventListener("mousedown",function(e) {
+	var mouse = {};
+	mouse.x = e.pageX - e.target.offsetLeft;
+	mouse.y = e.pageY - e.target.offsetTop;
+	if(player.canShoot){
+		//advising helper function(s?) to convert between world and screen space
+		//to make mouse interaction simpler
+		//I have added one
+		//good job me
+		//tbd
+		var vx = mouse.x - worldToScreen(player.movable.px,camX,ctx.canvas.width);
+		var vy = mouse.y - worldToScreen(player.movable.py,camY,ctx.canvas.height);
+		var mag = Math.sqrt(vx * vx + vy * vy);
+		vx *= 500 / mag;
+		vy *= 500 / mag;
+		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
+		var b = new Bullet(0,player.movable.px,player.movable.py-35,vx,vy,30);
+		bullets.push(b);
+		player.canShoot = false;
+	}
+});
+
 function input() {
 	if ( keys [83] ) {    //S
 		//console.log('S');
@@ -51,7 +73,7 @@ function input() {
 		}
 
 	
-		if ( keys [32] ) {    //Space
+		/*if ( keys [32] ) {    //Space
 			//console.log('Space');
 			// Bullet
 			if(player.canShoot){
@@ -61,7 +83,7 @@ function input() {
 				player.canShoot = false;
 			}
 
-		}
+		}*/
 		if ( keys [16] ) {    //Shift
 			//console.log('Shift');
 			//  Run
@@ -110,6 +132,14 @@ function update() {
 	
 	
 	for (var b = 0; b < bullets.length ; b++) {
+		if(bullets[b].movable.px < -trainWidth || 
+		bullets[b].movable.px > trainWidth * 2 ||
+		bullets[b].movable.py < -trainHeight ||
+		bullets[b].movable.py > trainHeight * 2) {
+			bullets.splice(b,1);//non optimal, we should probably have recycled bullets
+			b--;
+			continue;
+		}
 		if(bullets[b].id == 1){
 			//  Enemy killing player
 			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),player.getCollisionRectangle()))
@@ -152,10 +182,12 @@ function update() {
 
 	oldKeys = $.extend( {}, keys );
 }
+
+var trainWidth = 1000;
+var trainHeight = 200;
+
 function drawTrain(x,y,cx,cy)
 {
-	var trainWidth = 1000;
-	var trainHeight = 200;
 	var wheelRadius = 20;
 	var wheelSpacing = 300;
 	var sx = x - cx + (ctx.canvas.width/2);
@@ -192,6 +224,12 @@ function drawTrain(x,y,cx,cy)
 	ctx.fillRect(0, sy+wheelRadius*1.9, ctx.canvas.width, 5);
 	ctx.restore();
 }
+
+function worldToScreen(coord,camCoord,ctxDim) {
+	//sloppy and one dimensional for now, will refine after revamp to object "vectors"
+	return coord - camCoord + ctxDim / 2;
+}
+
 function draw() {
 	
 	ctx.save();

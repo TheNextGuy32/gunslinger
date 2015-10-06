@@ -95,8 +95,8 @@ function Person(x, y, collisionRadius)
     this.render = function(ctx,cx,cy)
     {
     	//console.log("Pos: " + sx+", " + sy);
-        var sx = this.movable.px - cx + (ctx.canvas.width/2);
-        var sy = this.movable.py - cy + (ctx.canvas.height/2);
+        var sx = worldToScreen(this.movable.px,cx,ctx.canvas.width);
+        var sy = worldToScreen(this.movable.py,cy,ctx.canvas.height);
         
         ctx.save();
         

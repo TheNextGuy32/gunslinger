@@ -13,7 +13,13 @@ function Enemy(x,y,collisionRadius) {
 		if(!this.canShoot)
 			return;
 		if(this.bullets > 0) {
-			var b = new Bullet(1,this.movable.px + this.facing * 5,this.movable.py-35,5);
+			var vx = this.movable.px - player.movable.px;
+			var vy = this.movable.py - player.movable.py;
+			vy -= (player.movement == MOVEMENT.STANDING) ? 0 : 15;
+			var mag = Math.sqrt(vx * vx + vy * vy);
+			vx *= -500 / mag;
+			vy *= -500 / mag;
+			var b = new Bullet(1,this.movable.px + this.facing * 5,this.movable.py-35,vx,vy,5);
 			b.facing = this.facing;
 			bullets.push(b);
 			
