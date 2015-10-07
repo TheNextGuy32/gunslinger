@@ -1,26 +1,29 @@
 var FACING =  
-{
+Object.seal({
 	LEFT:-1,
 	RIGHT:1	
-}
+});
 
 var MOVEMENT =  
-{
+Object.seal({
 	STANDING:0,
 	WALKING: 1,
 	RUNNING: 2,
 	SLIDING: 3,
 	CROUCHING: 4
-}
+});
 
-var walkSpeed = 200;
-var runSpeed = 300;
+const walkSpeed = 200;
+const runSpeed = 300;
 
 function Person(x, y, collisionRadius) 
 {
 	this.movable = new Movable(x,y,10);
 	this.animation = new Animation(x,y,10);
 
+	this.width = 50;
+	this.height = 50;
+	
 	this.facing = FACING.LEFT;
 	this.movement = MOVEMENT.STANDING;
 
@@ -50,65 +53,64 @@ function Person(x, y, collisionRadius)
 
 		//  Movable updating
 		var velocity = 0;
-		if(this.movement == MOVEMENT.WALKING || this.movement == MOVEMENT.SLIDING )
-		{
+		switch(this.movement) {
+		case MOVEMENT.WALKING:
+		case MOVEMENT.SLIDING:
 			velocity = walkSpeed;			
-		}
-		else if(this.movement == MOVEMENT.RUNNING)
-		{
+			break;
+		case MOVEMENT.RUNNING:
 			velocity = runSpeed;
-		}
-		if(this.facing == FACING.LEFT)
-		{
-			velocity = -velocity;
-		}
-		this.movable.vx = velocity;
-
+			break;
+		}//this could probably be simplified into an array of speeds
+		velocity *= this.facing;
+		
+		this.movable.vel.x = velocity;
 		this.movable.update(dt);
 
 		//  Animation updating
-		this.animation.worldX = this.movable.px;
-		this.animation.worldY = this.movable.py;
+		this.animation.worldX = this.movable.pos.x;
+		this.animation.worldY = this.movable.pos.y;
 
 		this.animation.update(dt);
 	};
+	
+	this.getDisp = function() {
+		var disp = {};
+		disp.x = this.width / 2;
+		disp.y = 0;
+		disp.w = this.width;
+		disp.h = 0;
+		switch(this.movement) {
+		case MOVEMENT.CROUCHING:
+			disp.y = this.height;
+			disp.h = this.height / 2;
+			break;
+		default:
+			disp.y = this.height / 2;
+			disp.h = this.height;
+			break;
+		}
+		return disp;
+	}
 
 	this.getCollisionRectangle = function()
 	{
-		if(this.movement != MOVEMENT.CROUCHING){
-	        return {
-	        	x:this.movable.px-25,
-	        	y:this.movable.py-50,
-	        	w:50,
-	        	h:50};
-	    }
-	    else
-	    {
-	    	return {
-	        	x:this.movable.px-25,
-	        	y:this.movable.py-25,
-	        	w:50,
-	        	h:50};
-	    }
+		var disp = this.getDisp();
+	    return { x:this.movable.pos.x - disp.x, y:this.movable.pos.y - disp.y
+		, w: disp.w, h: disp.h };
 	}
 
-    this.render = function(ctx,cx,cy)
+    this.render = function(ctx,camX,camY)
     {
     	//console.log("Pos: " + sx+", " + sy);
-        var sx = worldToScreen(this.movable.px,cx,ctx.canvas.width);
-        var sy = worldToScreen(this.movable.py,cy,ctx.canvas.height);
+        var sx = worldToScreen(this.movable.pos.x,camX,ctx.canvas.width);
+        var sy = worldToScreen(this.movable.pos.y,camY,ctx.canvas.height);
         
         ctx.save();
-        
         ctx.fillStyle = this.fillStyle;
-        if(this.movement != MOVEMENT.CROUCHING){
-	        ctx.fillRect(sx-25,sy-50,50,50);
-	    }
-	    else
-	    {
-	    	ctx.fillRect(sx-25,sy-25,50,25);
-	    }
-
+		
+        var disp = this.getDisp();
+	    ctx.fillRect(sx-disp.x,sy-disp.y,disp.w,disp.h);
         ctx.restore();
     };
 }

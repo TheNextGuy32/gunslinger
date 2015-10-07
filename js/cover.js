@@ -13,8 +13,8 @@ function Cover (xPos, yPos, width, height, collisionRadius) {
 	this.getCollisionRectangle = function()
 	{
 		return {
-	        	x:this.movable.px- (this.w/2),
-	        	y:this.movable.py- (this.h),
+	        	x:this.movable.pos.x- (this.w/2),
+	        	y:this.movable.pos.y- (this.h),
 	        	w:this.w,
 	        	h:this.h};
 	}
@@ -29,8 +29,8 @@ function Cover (xPos, yPos, width, height, collisionRadius) {
 	//draws cover
 	this.render = function(ctx,cx,cy){
     	//console.log("Pos: " + sx+", " + sy);
-        var sx = this.movable.px - cx + (ctx.canvas.width/2);
-        var sy = this.movable.py - cy + (ctx.canvas.height/2);
+        var sx = this.movable.pos.x - cx + (ctx.canvas.width/2);
+        var sy = this.movable.pos.y - cy + (ctx.canvas.height/2);
       
         ctx.save();
         ctx.fillStyle = "blue";

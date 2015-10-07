@@ -40,7 +40,7 @@ addEventListener("mousedown",function(e) {
 		vx *= 500 / mag;
 		vy *= 500 / mag;
 		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
-		var b = new Bullet(0,player.movable.px,player.movable.py-35,vx,vy,30);
+		var b = new Bullet(0,player.movable.pos.x,player.movable.pos.y-35,vx,vy,30);
 		bullets.push(b);
 		player.canShoot = false;
 	}
@@ -132,10 +132,10 @@ function update() {
 	
 	
 	for (var b = 0; b < bullets.length ; b++) {
-		if(bullets[b].movable.px < -trainWidth || 
-		bullets[b].movable.px > trainWidth * 2 ||
-		bullets[b].movable.py < -trainHeight ||
-		bullets[b].movable.py > trainHeight * 2) {
+		if(bullets[b].movable.pos.x < -trainWidth || 
+		bullets[b].movable.pos.x > trainWidth * 2 ||
+		bullets[b].movable.pos.y < -trainHeight ||
+		bullets[b].movable.pos.y > trainHeight * 2) {
 			bullets.splice(b,1);//non optimal, we should probably have recycled bullets
 			b--;
 			continue;
@@ -170,7 +170,7 @@ function update() {
 
 	input();
 	player.update(dt);
-	player.movable.px = Math.max(-15, Math.min(935, player.movable.px));
+	player.movable.pos.x = Math.max(-15, Math.min(935, player.movable.pos.x));
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		bullets[i].update(dt);
@@ -237,8 +237,8 @@ function draw() {
 	ctx.fillRect(0,0,canvas.width,canvas.height);
 	ctx.restore();
 
-	camX = player.movable.px;
-	camY = player.movable.py;
+	camX = player.movable.pos.x;
+	camY = player.movable.pos.y;
 	
 	drawTrain(-40,10,camX,camY);
 	

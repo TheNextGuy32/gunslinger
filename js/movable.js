@@ -1,13 +1,10 @@
 function Movable (x, y, mass) 
 {
-    this.px = x;
-    this.py = y;
+    this.pos = {x: x, y: y};//probably should make actual vector "class"
 
-    this.vx = 0;
-    this.vy = 0;
+    this.vel = {x: 0, y: 0};
 
-    this.ax = 0;
-    this.ay = 0;
+    this.accel = {x: 0, y: 0};
 
     this.mass = mass;
 
@@ -18,13 +15,13 @@ function Movable (x, y, mass)
 
     this.update = function(dt){
          
-        //this.ax = this.fx / this.mass;
-        //this.ay = this.fy / this.mass;
+        //this.accel.x = this.force.x / this.mass;
+        //this.accel.y = this.force.y / this.mass;
 
-        this.vx += this.ax * dt;
-        this.vy += this.ay * dt;
+        this.vel.x += this.accel.x * dt;
+        this.vel.y += this.accel.y * dt;
 
-        this.px += this.vx * dt;
-        this.py += this.vy * dt;
+        this.pos.x += this.vel.x * dt;
+        this.pos.y += this.vel.y * dt;
     };
 }
