@@ -39,6 +39,7 @@ addEventListener("mousedown",function(e) {
 		bulletStart.y -= 25;
 		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
 		var b = new Bullet(0,player.movable.pos.x+bulletStart.x,player.movable.pos.y+bulletStart.y,bulletVel.x,bulletVel.y,30);
+		b.id = FACTION.PLAYER;
 		bullets.push(b);
 		player.canShoot = false;
 		player.firing = true;
@@ -139,7 +140,7 @@ cover.push(new Cover(250,10,40,30,10,5));
 cover.push(new Cover(100,10,40,30,10,5));
 
 var enemies = new Array();
-// enemies.push(new Enemy(400,10,50));
+ enemies.push(new Enemy(400,10,50));
 // enemies.push(new Enemy(450,10,50));
 enemies.push(new Enemy(450,10,50));
 
@@ -169,47 +170,56 @@ function update() {
 	fps = 1000 / (now - lastTime);
 	lastTime = now; 
 	dt = 1/fps;
-		
-	for (var b = 0; b < bullets.length ; b++) {
-		
-		if(bullets[b].active){
-			if(bullets[b].movable.pos.x < -trainWidth || 
-			bullets[b].movable.pos.x > trainWidth * 2 ||
-			bullets[b].movable.pos.y < -trainHeight ||
-			bullets[b].movable.pos.y > trainHeight * 2) {
-				bullets[b].active = false;
-				continue;
-			}
-			if(bullets[b].id == 1){
-				//  Enemy killing player
-				if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),player.getCollisionRectangle()))
-				{
-					//console.log("Player");
-				}
-			}
-			else{
-				//  Player killing enemy
-				// for loop through enemies
-				for(var e = 0 ; e < enemies.length ; e++)
-				{
-					if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),enemies[e].getCollisionRectangle()))
-					{
-						//console.log("Enemy");
-					}
-				}
-			}
 
+	for (var b = 0; b < bullets.length ; b++)
+	{
+		//  If its going off the map
+		if(	bullets[b].movable.pos.x < -trainWidth 		|| 
+			bullets[b].movable.pos.x > trainWidth  * 2 	||
+			bullets[b].movable.pos.y < -trainHeight 	||
+			bullets[b].movable.pos.y > trainHeight * 2) 
+		{
+			bullets[b].active = false;
+			continue;
+		}
+		
+		if(bullets[b].id == FACTION.ENEMY){
 			
-			//  Colliding with cover
-			for (var c =0 ; c < cover.length; c++) {
+			//  Enemy killing player
+			if(doRectanglesOverlap(
+				bullets[b].getCollisionRectangle(),
+				player.getCollisionRectangle()))
+			{
+				bullets[b].active = false;
+			}
+		}
+		else
+		{
+			//  Player bullet
+			for(var e = 0 ; e < enemies.length ; e++)
+			{
 				if(doRectanglesOverlap(
 					bullets[b].getCollisionRectangle(),
-					cover[c].getBulletCollisionRectangle()))
+					enemies[e].getCollisionRectangle()))
 				{
+					enemies[e].active = false;
 					bullets[b].active = false;
+					break;
 				}
 			};
 		}
+
+		//  Colliding with cover
+		for (var c =0 ; c < cover.length; c++) 
+		{	
+			if(doRectanglesOverlap(
+				bullets[b].getCollisionRectangle(),
+				cover[c].getBulletCollisionRectangle()))
+			{
+				bullets[b].active = false;
+			}
+		};
+		
 	};
 
 	input();
@@ -221,7 +231,7 @@ function update() {
 	};
 
 	for(var e = 0 ; e < enemies.length; e++){
-		enemies[e].update(dt);
+		if(enemies[e].active) enemies[e].update(dt);
 	}
 
 	oldKeys = $.extend( {}, keys );
@@ -289,7 +299,7 @@ function draw() {
 	player.render(ctx,camX,camY);
 	
 	for(var e = 0 ; e < enemies.length; e++){
-		enemies[e].render(ctx,camX,camY);
+		if(enemies[e].active)enemies[e].render(ctx,camX,camY);
 	}
 	
 	for (var i = cover.length - 1; i >= 0; i--) {

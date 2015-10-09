@@ -123,7 +123,7 @@ function Person(x, y, collisionRadius)
 		//var rot = Math.sqrt(Math.pow(this.gunDir.x,2) + Math.pow(this.gunDir.y,2));
 		//rot = Math.acos(this.gunDir.x / rot);
 		var rot = Math.atan(this.gunDir.y / this.gunDir.x);
-		if(this.facing == -1)
+		if(this.facing == FACING.LEFT)
 		{
 			rot += 2*(Math.PI/2-rot);
 		}
