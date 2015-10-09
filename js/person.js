@@ -22,7 +22,7 @@ function Person(x, y, collisionRadius)
 	this.animation = new Animation(x,y,10);
 
 	this.width = 50;
-	this.height = 50;
+	this.height = 70;
 	
 	this.facing = FACING.LEFT;
 	this.movement = MOVEMENT.STANDING;
@@ -98,8 +98,11 @@ function Person(x, y, collisionRadius)
 	this.getCollisionRectangle = function()
 	{
 		var disp = this.getDisp();
-	    return { x:this.movable.pos.x - disp.x, y:this.movable.pos.y - disp.y
-		, w: disp.w, h: disp.h };
+	    return { 
+	    	x:this.movable.pos.x - disp.x, 
+	    	y:this.movable.pos.y - disp.y, 
+	    	w: disp.w, 
+	    	h: disp.h };
 	}
 
     this.render = function(ctx,camX,camY)

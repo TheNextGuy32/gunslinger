@@ -56,12 +56,39 @@ addEventListener("mousemove",function(e) {
 });
 
 function input() {
+
+	if ( keys [87] && !oldKeys[87] ) {    //W
+
+		for (var c =0 ; c < cover.length; c++) {
+			if(doRectanglesOverlap(
+				player.getCollisionRectangle(),
+				cover[c].getPlayerCollisionRectangle()))
+			{
+				console.log("Was " + cover[c].tableStatus);
+				console.log(player.getCollisionRectangle());
+				console.log(cover[c].getPlayerCollisionRectangle());
+				
+				if(player.movable.pos.x <= cover[c].xPos)
+				{
+					cover[c].alterTableStatus(1);
+				}
+				else
+				{
+					cover[c].alterTableStatus(-1);
+				}
+				console.log("Now " + cover[c].tableStatus);
+				console.log("- - -");
+				break;
+			}
+
+		};
+	}
+
 	if ( keys [83] ) {    //S
 		//console.log('S');
 		//Slide
 		player.movement = MOVEMENT.CROUCHING;
 	}
-
 	else {
 
 		if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
@@ -75,7 +102,7 @@ function input() {
 			player.movement = MOVEMENT.WALKING;
 		}
 
-		else if ( keys[65] ) {    //A
+		else if ( keys[65] ) {    //Aa
 			//console.log('A');
 			player.facing = FACING.LEFT;
 			player.movement = MOVEMENT.WALKING;
@@ -105,8 +132,9 @@ function input() {
 var player = new Person(10,10,50);
 
 var cover = new Array();
-cover.push(new Cover(200,10,30,30,40));//xPos, yPos, width, height, collisionRadius
-cover.push(new Cover(500,10,30,80,40));
+cover.push(new Cover(400,10,40,30,10,5));
+cover.push(new Cover(250,10,40,30,10,5));
+cover.push(new Cover(100,10,40,30,10,5));
 
 var enemies = new Array();
 // enemies.push(new Enemy(400,10,50));
@@ -171,10 +199,11 @@ function update() {
 		
 		//  Colliding with cover
 		for (var c =0 ; c < cover.length; c++) {
-			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),cover[c].getCollisionRectangle()))
-				{
-					//console.log("cover");
-				}
+			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),cover[c].getBulletCollisionRectangle()))
+			{
+				//bullets = bullets.splice(b,1);
+				//b--;
+			}
 		};
 	};
 
