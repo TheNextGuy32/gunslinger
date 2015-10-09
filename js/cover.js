@@ -61,7 +61,7 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
 		if(this.tableStatus == TABLE.RIGHT)
 		{
 			return {
-		        	x:this.movable.pos.x + (this.width/2) + this.h - this.thickness,
+		        	x:this.movable.pos.x + (this.w/2) + this.h - this.thickness,
 		        	y:this.movable.pos.y - (this.h),
 		        	w:this.thickness,
 		        	h:this.w
@@ -70,7 +70,7 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
         else if(this.tableStatus == TABLE.LEFT)
 		{
 			return {
-		        	x:this.movable.pos.x - (this.width/2) - this.h,
+		        	x:this.movable.pos.x - (this.w/2) - this.h,
 		        	y:this.movable.pos.y - (this.h),
 		        	w:this.thickness,
 		        	h:this.w
