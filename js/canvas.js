@@ -173,53 +173,54 @@ function update() {
 
 	for (var b = 0; b < bullets.length ; b++)
 	{
-		//  If its going off the map
-		if(	bullets[b].movable.pos.x < -trainWidth 		|| 
-			bullets[b].movable.pos.x > trainWidth  * 2 	||
-			bullets[b].movable.pos.y < -trainHeight 	||
-			bullets[b].movable.pos.y > trainHeight * 2) 
-		{
-			bullets[b].active = false;
-			continue;
-		}
-		
-		if(bullets[b].id == FACTION.ENEMY){
-			
-			//  Enemy killing player
-			if(doRectanglesOverlap(
-				bullets[b].getCollisionRectangle(),
-				player.getCollisionRectangle()))
+		if(bullets[b].active){
+			//  If its going off the map
+			if(	bullets[b].movable.pos.x < -trainWidth 		|| 
+				bullets[b].movable.pos.x > trainWidth  * 2 	||
+				bullets[b].movable.pos.y < -trainHeight 	||
+				bullets[b].movable.pos.y > trainHeight * 2) 
 			{
 				bullets[b].active = false;
+				continue;
 			}
-		}
-		else
-		{
-			//  Player bullet
-			for(var e = 0 ; e < enemies.length ; e++)
-			{
+			
+			if(bullets[b].id == FACTION.ENEMY){
+				
+				//  Enemy killing player
 				if(doRectanglesOverlap(
 					bullets[b].getCollisionRectangle(),
-					enemies[e].getCollisionRectangle()))
+					player.getCollisionRectangle()))
 				{
-					enemies[e].active = false;
 					bullets[b].active = false;
-					break;
+				}
+			}
+			else
+			{
+				//  Player bullet
+				for(var e = 0 ; e < enemies.length ; e++)
+				{
+					if(doRectanglesOverlap(
+						bullets[b].getCollisionRectangle(),
+						enemies[e].getCollisionRectangle()))
+					{
+						enemies[e].active = false;
+						bullets[b].active = false;
+						break;
+					}
+				};
+			}
+
+			//  Colliding with cover
+			for (var c =0 ; c < cover.length; c++) 
+			{	
+				if(doRectanglesOverlap(
+					bullets[b].getCollisionRectangle(),
+					cover[c].getBulletCollisionRectangle()))
+				{
+					bullets[b].active = false;
 				}
 			};
 		}
-
-		//  Colliding with cover
-		for (var c =0 ; c < cover.length; c++) 
-		{	
-			if(doRectanglesOverlap(
-				bullets[b].getCollisionRectangle(),
-				cover[c].getBulletCollisionRectangle()))
-			{
-				bullets[b].active = false;
-			}
-		};
-		
 	};
 
 	input();
