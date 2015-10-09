@@ -1,6 +1,12 @@
 
 var bulletSpeed = 12000;
 
+var FACTION =  
+Object.seal({
+	PLAYER:0,
+	ENEMY:1	
+});
+
 function Bullet(factionID, x, y, ax, ay, collisionRadius) 
 {
 	this.id = factionID;
@@ -9,6 +15,8 @@ function Bullet(factionID, x, y, ax, ay, collisionRadius)
 	this.movable.accel.y = ay * bulletSpeed;
 	this.animation = new Animation(x,y,10);
 	
+	this.active = true;
+
 	this.r = collisionRadius;
 
 	this.update = function(dt)

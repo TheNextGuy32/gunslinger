@@ -25,19 +25,25 @@ addEventListener("keyup", function (e)
 }, false);
 
 addEventListener("mousedown",function(e) {
+	if(gamePaused) {
+		resumeGame();
+		return;
+	}
 	if(player.canShoot){
 		//advising helper function(s?) to convert between world and screen space
 		//to make mouse interaction simpler
 		//I have added one
 		//good job me
 		//tbd
-		var vx = player.gunDir.x;
-		var vy = player.gunDir.y;
-		var mag = Math.sqrt(vx * vx + vy * vy);
-		vx /= mag;
-		vy /= mag;
+		var bulletAccel = player.gunDir.copy();
+		bulletAccel = bulletAccel.normalize();
+		
+		var bulletStart = bulletAccel.copy();
+		bulletStart.setMag(25);
+		bulletStart.y -= 50;
 		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
-		var b = new Bullet(0,player.movable.pos.x,player.movable.pos.y-35,vx,vy,30);
+		var b = new Bullet(0,player.movable.pos.x+bulletStart.x,player.movable.pos.y+bulletStart.y,bulletAccel.x,bulletAccel.y,30);
+		b.id = FACTION.PLAYER;
 		bullets.push(b);
 		player.canShoot = false;
 		player.firing = true;
@@ -45,23 +51,51 @@ addEventListener("mousedown",function(e) {
 });
 
 addEventListener("mousemove",function(e) {
-	var mouse = {};
+	var mouse = new Vector(0, 0);
+	var delta = new Vector(0, 0);
 	mouse.x = e.pageX - e.target.offsetLeft;
 	mouse.y = e.pageY - e.target.offsetTop;
-	var dx = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
-	var dy = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
+	delta.x = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
+	//delta.x = player.facing*Math.abs(delta.x);
+	delta.y = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
 	//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
-	player.gunDir.x = dx;
-	player.gunDir.y = dy;
+	player.gunDir = delta;
 });
 
 function input() {
+
+	if ( keys [87] && !oldKeys[87] ) {    //W
+
+		for (var c =0 ; c < cover.length; c++) {
+			if(doRectanglesOverlap(
+				player.getCollisionRectangle(),
+				cover[c].getPlayerCollisionRectangle()))
+			{
+				console.log("Was " + cover[c].tableStatus);
+				console.log(player.getCollisionRectangle());
+				console.log(cover[c].getPlayerCollisionRectangle());
+				
+				if(player.movable.pos.x <= cover[c].xPos)
+				{
+					cover[c].alterTableStatus(1);
+				}
+				else
+				{
+					cover[c].alterTableStatus(-1);
+				}
+				console.log("Now " + cover[c].tableStatus);
+				console.log("- - -");
+				break;
+			}
+
+		};
+	}
+
 	if ( keys [83] ) {    //S
 		//console.log('S');
 		//Slide
 		player.movement = MOVEMENT.CROUCHING;
 	}
-
 	else {
 
 		if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
@@ -75,7 +109,7 @@ function input() {
 			player.movement = MOVEMENT.WALKING;
 		}
 
-		else if ( keys[65] ) {    //A
+		else if ( keys[65] ) {    //Aa
 			//console.log('A');
 			player.facing = FACING.LEFT;
 			player.movement = MOVEMENT.WALKING;
@@ -97,6 +131,19 @@ function input() {
 			//console.log('Shift');
 			//  Run
 		}
+		if ( keys [80] ) {    //p
+			if(gamePaused){
+				gamePaused = false;
+				resumeGame();
+				//console.log('Resume');
+			}
+			else{
+			//console.log('Pause');
+			gamePaused = true;
+			pauseGame();
+			draw
+			}
+		}
 	}
 
 
@@ -105,21 +152,23 @@ function input() {
 var player = new Person(10,10,50);
 
 var cover = new Array();
-cover.push(new Cover(200,10,30,30,40));//xPos, yPos, width, height, collisionRadius
-cover.push(new Cover(500,10,30,80,40));
+cover.push(new Cover(400,10,40,30,10,5));
+cover.push(new Cover(250,10,40,30,10,5));
+cover.push(new Cover(100,10,40,30,10,5));
 
 var enemies = new Array();
-// enemies.push(new Enemy(400,10,50));
+ enemies.push(new Enemy(400,10,50));
 // enemies.push(new Enemy(450,10,50));
 enemies.push(new Enemy(450,10,50));
 
 var bullets = new Array();
 
 var lastTime = (+new Date);
-
+var gamePaused = false;
+var game = setTimeout(update,1000/30);
 var camX = 0;
 var camY = 0;
-
+var now,fps, dt;
 function init() {
 	animFrame( recursiveAnim );
 }
@@ -133,49 +182,68 @@ function doRectanglesOverlap(r1, r2)
 }
 
 function update() {
+	if(gamePaused)
+		return;
+	
 	//Calculating dt
-	var now,fps, dt;
 	now = (+new Date); 
 	fps = 1000 / (now - lastTime);
 	lastTime = now; 
 	dt = 1/fps;
-		
-	for (var b = 0; b < bullets.length ; b++) {
-		if(bullets[b].movable.pos.x < -trainWidth || 
-		bullets[b].movable.pos.x > trainWidth * 2 ||
-		bullets[b].movable.pos.y < -trainHeight ||
-		bullets[b].movable.pos.y > trainHeight * 2) {
-			bullets.splice(b,1);//non optimal, we should probably have recycled bullets
-			b--;
-			continue;
-		}
-		if(bullets[b].id == 1){
-			//  Enemy killing player
-			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),player.getCollisionRectangle()))
+	
+	for (var b = 0; b < bullets.length ; b++)
+	{
+		if(bullets[b].active){
+			//  If its going off the map
+			if(	bullets[b].movable.pos.x < -trainWidth 		|| 
+				bullets[b].movable.pos.x > trainWidth  * 2 	||
+				bullets[b].movable.pos.y < -trainHeight 	||
+				bullets[b].movable.pos.y > trainHeight * 2) 
 			{
-				//console.log("Player");
+				bullets[b].active = false;
+				continue;
 			}
-		}
-		else{
-			//  Player killing enemy
-			// for loop through enemies
-			for(var e = 0 ; e < enemies.length ; e++)
-			{
-				if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),enemies[e].getCollisionRectangle()))
+			
+			if(bullets[b].id == FACTION.ENEMY){
+				
+				//  Enemy killing player
+				if(doRectanglesOverlap(
+					bullets[b].getCollisionRectangle(),
+					player.getCollisionRectangle()))
 				{
-					//console.log("Enemy");
+					bullets[b].active = false;
 				}
 			}
-		}
+			else
+			{
+				//  Player bullet
+				for(var e = 0 ; e < enemies.length ; e++)
+				{
+					if(enemies[e].active)
+					{
+						if(doRectanglesOverlap(
+							bullets[b].getCollisionRectangle(),
+							enemies[e].getCollisionRectangle()))
+						{
+							enemies[e].active = false;
+							bullets[b].active = false;
+							break;
+						}
+					}
+				};
+			}
 
-		
-		//  Colliding with cover
-		for (var c =0 ; c < cover.length; c++) {
-			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),cover[c].getCollisionRectangle()))
+			//  Colliding with cover
+			for (var c =0 ; c < cover.length; c++) 
+			{	
+				if(doRectanglesOverlap(
+					bullets[b].getCollisionRectangle(),
+					cover[c].getBulletCollisionRectangle()))
 				{
-					//console.log("cover");
+					bullets[b].active = false;
 				}
-		};
+			};
+		}
 	};
 
 	input();
@@ -183,11 +251,11 @@ function update() {
 	player.movable.pos.x = Math.max(-15, Math.min(935, player.movable.pos.x));
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
-		bullets[i].update(dt);
+		if(bullets[i].active) bullets[i].update(dt);
 	};
 
 	for(var e = 0 ; e < enemies.length; e++){
-		enemies[e].update(dt);
+		if(enemies[e].active) enemies[e].update(dt);
 	}
 
 	oldKeys = $.extend( {}, keys );
@@ -241,7 +309,7 @@ function worldToScreen(coord,camCoord,ctxDim) {
 }
 
 function draw() {
-	
+	//ctx.globalAlpha = 0.25;
 	ctx.save();
 	ctx.fillStyle = 'gray';
 	ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -255,7 +323,7 @@ function draw() {
 	player.render(ctx,camX,camY);
 	
 	for(var e = 0 ; e < enemies.length; e++){
-		enemies[e].render(ctx,camX,camY);
+		if(enemies[e].active)enemies[e].render(ctx,camX,camY);
 	}
 	
 	for (var i = cover.length - 1; i >= 0; i--) {
@@ -263,10 +331,49 @@ function draw() {
 	};
 	
 	for (var i = bullets.length - 1; i >= 0; i--) {
-		bullets[i].render(ctx,camX,camY);
+		if(bullets[i].active) bullets[i].render(ctx,camX,camY);
 	};
 }
-
+function pauseGame() {
+		//pausedGame = true;
+		gamePaused = true;
+		cancelAnimationFrame(recursiveAnim);
+		update();
+  } 
+  
+function resumeGame(){
+		//cancelAnimationFrame(this.animationID);
+		gamePaused = false;
+		//update();
+		recursiveAnim();
+		//this.sound.playBGAudio();
+	}
+	
+function fillText(string, x, y, css, color) {
+		ctx.save();
+		ctx.font = css;
+		ctx.fillStyle = color;
+		ctx.fillText(string, x, y);
+		ctx.restore();
+	}
+function drawPauseScreen(){
+		ctx.save();
+		ctx.fillStyle = "black";
+		ctx.fillRect(0,0,canvas.width,canvas.height);
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		fillText("Click to Play",canvas.width/2,canvas.height/2,"40pt courier","white");
+		ctx.restore();
+		
+	}
+window.onblur = function(){
+	console.log("blur at" + Date());
+	pauseGame();
+}
+window.onfocus = function(){
+	console.log("focus at" + Date());
+	resumeGame();
+}
 window.onload = init;
 var animFrame = 
 	window.requestAnimationFrame   			
@@ -279,6 +386,13 @@ var animFrame =
 
 var recursiveAnim = function() {
     update();
+	
+	if(gamePaused){
+		ctx.globalAlpha = 0.75;
+		drawPauseScreen(ctx);
+		return;
+	}
+	//ctx.globalAlpha = 1.0;
     draw();
     animFrame( recursiveAnim );
 };
