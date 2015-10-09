@@ -1,13 +1,12 @@
 
+var bulletSpeed = 12000;
 
-var bulletSpeed = 10;
-
-function Bullet(factionID, x, y, vx, vy, collisionRadius) 
+function Bullet(factionID, x, y, ax, ay, collisionRadius) 
 {
 	this.id = factionID;
 	this.movable = new Movable(x,y,10);
-	this.movable.vel.x = vx;
-	this.movable.vel.y = vy;
+	this.movable.accel.x = ax * bulletSpeed;
+	this.movable.accel.y = ay * bulletSpeed;
 	this.animation = new Animation(x,y,10);
 	
 	this.r = collisionRadius;

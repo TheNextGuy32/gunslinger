@@ -34,8 +34,8 @@ addEventListener("mousedown",function(e) {
 		var vx = player.gunDir.x;
 		var vy = player.gunDir.y;
 		var mag = Math.sqrt(vx * vx + vy * vy);
-		vx *= 500 / mag;
-		vy *= 500 / mag;
+		vx /= mag;
+		vy /= mag;
 		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
 		var b = new Bullet(0,player.movable.pos.x,player.movable.pos.y-35,vx,vy,30);
 		bullets.push(b);

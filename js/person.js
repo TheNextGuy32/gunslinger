@@ -28,12 +28,12 @@ function Person(x, y, collisionRadius)
 	this.movement = MOVEMENT.STANDING;
 
 	this.canShoot = true;
-	this.shootCooldown = 1;
+	this.shootCooldown = 0.5;
 	this.shootTimer = 0;
 	this.firing = false;
 	this.gunDir = {x:0,y:0};
 	
-	this.fillStyle = "grey";
+	this.fillStyle = "lightgrey";
 
 	this.r = collisionRadius;
 
@@ -120,7 +120,7 @@ function Person(x, y, collisionRadius)
 		//var rot = Math.sqrt(Math.pow(this.gunDir.x,2) + Math.pow(this.gunDir.y,2));
 		//rot = Math.acos(this.gunDir.x / rot);
 		var rot = Math.atan(this.gunDir.y / this.gunDir.x);
-		rot = (this.gunDir.x > 0) ? rot : Math.PI * 2 - rot;
+		rot = (this.gunDir.x >= 0) ? rot : Math.PI + rot - Math.PI * 2;
 		//rot -= (this.gunDir.y > 0) ? 0 : Math.PI / 2;
 		//console.log("Rotation: " + rot + " X: " + this.gunDir.x + " Y: " + this.gunDir.y);
 		ctx.rotate(rot);
