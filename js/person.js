@@ -22,7 +22,7 @@ function Person(x, y, collisionRadius)
 	this.animation = new Animation(x,y,10);
 
 	this.width = 50;
-	this.height = 50;
+	this.height = 70;
 	
 	this.facing = FACING.LEFT;
 	this.movement = MOVEMENT.STANDING;
@@ -31,7 +31,7 @@ function Person(x, y, collisionRadius)
 	this.shootCooldown = 1;
 	this.shootTimer = 0;
 	this.firing = false;
-	this.gunDir = {x:0,y:0};
+	this.gunDir = new Vector(0, 0);
 	
 	this.fillStyle = "grey";
 
@@ -98,8 +98,11 @@ function Person(x, y, collisionRadius)
 	this.getCollisionRectangle = function()
 	{
 		var disp = this.getDisp();
-	    return { x:this.movable.pos.x - disp.x, y:this.movable.pos.y - disp.y
-		, w: disp.w, h: disp.h };
+	    return { 
+	    	x:this.movable.pos.x - disp.x, 
+	    	y:this.movable.pos.y - disp.y, 
+	    	w: disp.w, 
+	    	h: disp.h };
 	}
 
     this.render = function(ctx,camX,camY)
@@ -120,7 +123,12 @@ function Person(x, y, collisionRadius)
 		//var rot = Math.sqrt(Math.pow(this.gunDir.x,2) + Math.pow(this.gunDir.y,2));
 		//rot = Math.acos(this.gunDir.x / rot);
 		var rot = Math.atan(this.gunDir.y / this.gunDir.x);
+		if(this.facing == FACING.LEFT)
+		{
+			rot += 2*(Math.PI/2-rot);
+		}
 		rot = (this.gunDir.x > 0) ? rot : Math.PI * 2 - rot;
+		
 		//rot -= (this.gunDir.y > 0) ? 0 : Math.PI / 2;
 		//console.log("Rotation: " + rot + " X: " + this.gunDir.x + " Y: " + this.gunDir.y);
 		ctx.rotate(rot);
