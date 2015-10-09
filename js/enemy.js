@@ -8,19 +8,18 @@ function Enemy(x,y,collisionRadius) {
 	//this.alerted = false;
 	
 	this.fillStyle = "red";
+	var gunDisplacement = new Vector(20, -30);
 	
 	this.fireAt = function(target) {
 		if(!this.canShoot)
 			return;
 		if(this.bullets > 0) {
-			var vx = this.movable.pos.x - player.movable.pos.x;
-			var vy = this.movable.pos.y - player.movable.pos.y;
-			vy -= (player.movement == MOVEMENT.STANDING) ? 0 : 15;
-			var mag = Math.sqrt(vx * vx + vy * vy);
-			vx *= -500 / mag;
-			vy *= -500 / mag;
+			var v = this.movable.pos.sub(player.movable.pos);
+			v.y -= (player.movement == MOVEMENT.STANDING) ? 0 : 15;
+			v.setMag(-500);
 			var disp = this.getDisp();
-			var b = new Bullet(1,this.movable.pos.x + this.facing * 5,this.movable.pos.y-disp.y - 10,vx,vy,5);
+			var b = new Bullet(1,this.movable.pos.x + this.facing * 5,this.movable.pos.y-disp.y - 10,v.x,v.y,5);
+			b.id = FACTION.ENEMY;
 			bullets.push(b);
 			
 			this.bullets--;
@@ -33,7 +32,8 @@ function Enemy(x,y,collisionRadius) {
 		}
 	}
 	
-	this.update = function(dt) {
+	this.update = function(dt)
+	{
 		this.updateShoot(dt);
 		//if the player is firing on you, always fire back rn
 		 if(player.firing) {
@@ -45,6 +45,7 @@ function Enemy(x,y,collisionRadius) {
 			this.velocity = player.movable.pos.x - this.movable.pos.x;
 			this.velocity *= 50 / this.targetRadius;//makes it proportional to distance
 			this.facing = Math.sign(this.velocity);
+			console.log(this.facing);
 		}
 		//fire if the player isn't already firing at you and you've closed the distance
 		else if (!player.firing) {

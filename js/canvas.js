@@ -39,6 +39,7 @@ addEventListener("mousedown",function(e) {
 		bulletStart.y -= 25;
 		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
 		var b = new Bullet(0,player.movable.pos.x+bulletStart.x,player.movable.pos.y+bulletStart.y,bulletVel.x,bulletVel.y,30);
+		b.id = FACTION.PLAYER;
 		bullets.push(b);
 		player.canShoot = false;
 		player.firing = true;
@@ -111,7 +112,7 @@ cover.push(new Cover(200,10,30,30,40));//xPos, yPos, width, height, collisionRad
 cover.push(new Cover(500,10,30,80,40));
 
 var enemies = new Array();
-// enemies.push(new Enemy(400,10,50));
+ enemies.push(new Enemy(400,10,50));
 // enemies.push(new Enemy(450,10,50));
 enemies.push(new Enemy(450,10,50));
 
@@ -141,8 +142,11 @@ function update() {
 	fps = 1000 / (now - lastTime);
 	lastTime = now; 
 	dt = 1/fps;
-		
-	for (var b = 0; b < bullets.length ; b++) {
+	
+	var currentBulletDestroyed;
+	for (var b = 0; b < bullets.length ; b++)
+	{
+		currentBulletDestroyed = false;
 		if(bullets[b].movable.pos.x < -trainWidth || 
 		bullets[b].movable.pos.x > trainWidth * 2 ||
 		bullets[b].movable.pos.y < -trainHeight ||
@@ -151,10 +155,13 @@ function update() {
 			b--;
 			continue;
 		}
-		if(bullets[b].id == 1){
+		if(bullets[b].id == FACTION.ENEMY){
 			//  Enemy killing player
 			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),player.getCollisionRectangle()))
 			{
+				//Player is on godmode.
+				bullets.splice(b, 1);
+				continue;
 				//console.log("Player");
 			}
 		}
@@ -165,9 +172,17 @@ function update() {
 			{
 				if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),enemies[e].getCollisionRectangle()))
 				{
-					//console.log("Enemy");
+					console.log("Enemy");
+					enemies.splice(e, 1);
+					bullets.splice(b, 1);
+					currentBulletDestroyed = true;
+					break;
 				}
 			}
+		}
+		if(currentBulletDestroyed)
+		{
+			continue;
 		}
 
 		

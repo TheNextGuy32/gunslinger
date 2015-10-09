@@ -1,4 +1,8 @@
-
+var FACTION =  
+Object.seal({
+	PLAYER:0,
+	ENEMY:1	
+});
 
 var bulletSpeed = 10;
 
