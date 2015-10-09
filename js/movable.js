@@ -1,10 +1,10 @@
 function Movable (x, y, mass) 
 {
-    this.pos = {x: x, y: y};//probably should make actual vector "class"
+    this.pos = new Vector(x, y);
 
-    this.vel = {x: 0, y: 0};
+    this.vel = new Vector(0, 0);
 
-    this.accel = {x: 0, y: 0};
+    this.accel = new Vector(0, 0);
 
     this.mass = mass;
 
