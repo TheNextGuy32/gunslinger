@@ -23,8 +23,7 @@ function Vector(initX, initY)
 	this.normalize= function()
 	{
 		var mag = this.getMag();
-		this.x /= mag;
-		this.y /= mag;
+		return new Vector(x/mag, y/mag);
 	};
 	
 	this.add= function(otherVec)

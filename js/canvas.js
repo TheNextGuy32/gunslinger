@@ -31,13 +31,14 @@ addEventListener("mousedown",function(e) {
 		//I have added one
 		//good job me
 		//tbd
-		var vx = player.gunDir.x;
-		var vy = player.gunDir.y;
-		var mag = Math.sqrt(vx * vx + vy * vy);
-		vx *= 500 / mag;
-		vy *= 500 / mag;
+		var bulletVel = player.gunDir.copy();
+		bulletVel.setMag(500);
+		
+		var bulletStart = bulletVel.copy();
+		bulletStart.setMag(25);
+		bulletStart.y -= 25;
 		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
-		var b = new Bullet(0,player.movable.pos.x,player.movable.pos.y-35,vx,vy,30);
+		var b = new Bullet(0,player.movable.pos.x+bulletStart.x,player.movable.pos.y+bulletStart.y,bulletVel.x,bulletVel.y,30);
 		bullets.push(b);
 		player.canShoot = false;
 		player.firing = true;
@@ -45,14 +46,15 @@ addEventListener("mousedown",function(e) {
 });
 
 addEventListener("mousemove",function(e) {
-	var mouse = {};
+	var mouse = new Vector(0, 0);
+	var delta = new Vector(0, 0);
 	mouse.x = e.pageX - e.target.offsetLeft;
 	mouse.y = e.pageY - e.target.offsetTop;
-	var dx = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
-	var dy = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
+	delta.x = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
+	delta.x = player.facing*Math.abs(delta.x);
+	delta.y = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
 	//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
-	player.gunDir.x = dx;
-	player.gunDir.y = dy;
+	player.gunDir = delta;
 });
 
 function input() {
