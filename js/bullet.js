@@ -10,6 +10,8 @@ function Bullet(factionID, x, y, vx, vy, collisionRadius)
 	this.movable.vel.y = vy;
 	this.animation = new Animation(x,y,10);
 	
+	this.active = true;
+
 	this.r = collisionRadius;
 
 	this.update = function(dt)

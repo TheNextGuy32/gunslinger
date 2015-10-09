@@ -79,8 +79,8 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
         else
         {
 			return {
-	        	x:this.movable.pos.x- (this.w/2),
-	        	y:this.movable.pos.y- (this.h),
+	        	x:this.movable.pos.x - (this.w/2),
+	        	y:this.movable.pos.y - (this.h),
 	        	w:this.w,
 	        	h:this.thickness
         	}; 	        	

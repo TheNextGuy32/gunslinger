@@ -169,42 +169,45 @@ function update() {
 	dt = 1/fps;
 		
 	for (var b = 0; b < bullets.length ; b++) {
-		if(bullets[b].movable.pos.x < -trainWidth || 
-		bullets[b].movable.pos.x > trainWidth * 2 ||
-		bullets[b].movable.pos.y < -trainHeight ||
-		bullets[b].movable.pos.y > trainHeight * 2) {
-			bullets.splice(b,1);//non optimal, we should probably have recycled bullets
-			b--;
-			continue;
-		}
-		if(bullets[b].id == 1){
-			//  Enemy killing player
-			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),player.getCollisionRectangle()))
-			{
-				//console.log("Player");
+		
+		if(bullets[b].active){
+			if(bullets[b].movable.pos.x < -trainWidth || 
+			bullets[b].movable.pos.x > trainWidth * 2 ||
+			bullets[b].movable.pos.y < -trainHeight ||
+			bullets[b].movable.pos.y > trainHeight * 2) {
+				bullets[b].active = false;
+				continue;
 			}
-		}
-		else{
-			//  Player killing enemy
-			// for loop through enemies
-			for(var e = 0 ; e < enemies.length ; e++)
-			{
-				if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),enemies[e].getCollisionRectangle()))
+			if(bullets[b].id == 1){
+				//  Enemy killing player
+				if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),player.getCollisionRectangle()))
 				{
-					//console.log("Enemy");
+					//console.log("Player");
 				}
 			}
-		}
-
-		
-		//  Colliding with cover
-		for (var c =0 ; c < cover.length; c++) {
-			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),cover[c].getBulletCollisionRectangle()))
-			{
-				//bullets = bullets.splice(b,1);
-				//b--;
+			else{
+				//  Player killing enemy
+				// for loop through enemies
+				for(var e = 0 ; e < enemies.length ; e++)
+				{
+					if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),enemies[e].getCollisionRectangle()))
+					{
+						//console.log("Enemy");
+					}
+				}
 			}
-		};
+
+			
+			//  Colliding with cover
+			for (var c =0 ; c < cover.length; c++) {
+				if(doRectanglesOverlap(
+					bullets[b].getCollisionRectangle(),
+					cover[c].getBulletCollisionRectangle()))
+				{
+					bullets[b].active = false;
+				}
+			};
+		}
 	};
 
 	input();
@@ -212,7 +215,7 @@ function update() {
 	player.movable.pos.x = Math.max(-15, Math.min(935, player.movable.pos.x));
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
-		bullets[i].update(dt);
+		if(bullets[i].active) bullets[i].update(dt);
 	};
 
 	for(var e = 0 ; e < enemies.length; e++){
@@ -292,7 +295,7 @@ function draw() {
 	};
 	
 	for (var i = bullets.length - 1; i >= 0; i--) {
-		bullets[i].render(ctx,camX,camY);
+		if(bullets[i].active) bullets[i].render(ctx,camX,camY);
 	};
 }
 
