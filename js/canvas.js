@@ -127,6 +127,19 @@ function input() {
 			//console.log('Shift');
 			//  Run
 		}
+		if ( keys [80] ) {    //p
+			if(gamePaused == true){
+			gamePaused = false;
+			resumeGame();
+			console.log('Resume');
+			}
+			else if(gamePaused == false){
+			console.log('Pause');
+			gamePaused = true;
+			pauseGame();
+			draw
+			}
+		}
 	}
 
 
@@ -147,10 +160,11 @@ enemies.push(new Enemy(450,10,50));
 var bullets = new Array();
 
 var lastTime = (+new Date);
-
+var gamePaused = false;
+var game = setTimeout(update,1000/30);
 var camX = 0;
 var camY = 0;
-
+var now,fps, dt;
 function init() {
 	animFrame( recursiveAnim );
 }
@@ -165,7 +179,7 @@ function doRectanglesOverlap(r1, r2)
 
 function update() {
 	//Calculating dt
-	var now,fps, dt;
+
 	now = (+new Date); 
 	fps = 1000 / (now - lastTime);
 	lastTime = now; 
@@ -289,7 +303,7 @@ function worldToScreen(coord,camCoord,ctxDim) {
 }
 
 function draw() {
-	
+	//ctx.globalAlpha = 0.25;
 	ctx.save();
 	ctx.fillStyle = 'gray';
 	ctx.fillRect(0,0,canvas.width,canvas.height);
@@ -314,7 +328,44 @@ function draw() {
 		if(bullets[i].active) bullets[i].render(ctx,camX,camY);
 	};
 }
-
+function pauseGame() {
+		//pausedGame = true;
+		gamePaused = true;
+		cancelAnimationFrame(recursiveAnim);
+		update();
+  } 
+function resumeGame(){
+		//cancelAnimationFrame(this.animationID);
+		gamePaused = false;
+		//update();
+		recursiveAnim();
+		//this.sound.playBGAudio();
+	}
+function fillText(string, x, y, css, color) {
+		ctx.save();
+		ctx.font = css;
+		ctx.fillStyle = color;
+		ctx.fillText(string, x, y);
+		ctx.restore();
+	}
+function drawPauseScreen(){
+		ctx.save();
+		ctx.fillStyle = "black";
+		ctx.fillRect(0,0,canvas.width,canvas.height);
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		fillText("Click to Play",canvas.width/2,canvas.height/2,"40pt courier","white");
+		ctx.restore();
+		
+	}
+window.onblur = function(){
+	console.log("blur at" + Date());
+	pauseGame();
+}
+window.onfocus = function(){
+	console.log("focus at" + Date());
+	resumeGame();
+}
 window.onload = init;
 var animFrame = 
 	window.requestAnimationFrame   			
@@ -327,6 +378,13 @@ var animFrame =
 
 var recursiveAnim = function() {
     update();
+	
+	if(gamePaused){
+		ctx.globalAlpha = 0.75;
+		drawPauseScreen(ctx);
+		return;
+	}
+	//ctx.globalAlpha = 1.0;
     draw();
     animFrame( recursiveAnim );
 };
