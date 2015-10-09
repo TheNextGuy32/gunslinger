@@ -20,7 +20,7 @@ function Enemy(x,y,collisionRadius) {
 			vx *= -500 / mag;
 			vy *= -500 / mag;
 			var disp = this.getDisp();
-			var b = new Bullet(1,this.movable.px + this.facing * 5,this.movable.py-disp.y - 10,vx,vy,5);
+			var b = new Bullet(1,this.movable.pos.x + this.facing * 5,this.movable.pos.y-disp.y - 10,vx,vy,5);
 			bullets.push(b);
 			
 			this.bullets--;
@@ -36,16 +36,15 @@ function Enemy(x,y,collisionRadius) {
 	this.update = function(dt) {
 		this.updateShoot(dt);
 		//if the player is firing on you, always fire back rn
-		// if(player.firing) {
-		// 	fireAt(target);
-		// }
+		 if(player.firing) {
+		 	this.fireAt(this.target);
+		 }
 		//close the distance between you and the player
-		if(Math.abs(player.movable.px - this.movable.px) > this.targetRadius) {
-
+		if(Math.abs(player.movable.pos.x - this.movable.pos.x) > this.targetRadius) {
 			this.movement = MOVEMENT.WALKING;
-			velocity = player.movable.pos.x - this.movable.pos.x;
-			velocity *= 5 / targetRadius;//makes it proportional to distance
-			this.facing = Math.sign(velocity);
+			this.velocity = player.movable.pos.x - this.movable.pos.x;
+			this.velocity *= 50 / this.targetRadius;//makes it proportional to distance
+			this.facing = Math.sign(this.velocity);
 		}
 		//fire if the player isn't already firing at you and you've closed the distance
 		else if (!player.firing) {
@@ -53,11 +52,11 @@ function Enemy(x,y,collisionRadius) {
 			//in the future this will allow the enemy to fire at you while ducking
 			this.movement = MOVEMENT.STANDING;
 			this.velocity = 0;
-			this.facing = Math.sign(player.movable.x - this.movable.pos.x);
+			this.facing = Math.sign(player.movable.pos.x - this.movable.pos.x);
 			//this happens when they are completely on top of each other
-			if(this.facing == 0) this.facing = FACING.LEFT;
+			if(!this.facing) this.facing = FACING.LEFT;
 		}
-
+		this.movable.vel.x = this.velocity;
 		this.movable.update(dt);
 		
 		//  Animation updating

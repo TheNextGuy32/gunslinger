@@ -34,8 +34,8 @@ addEventListener("mousedown",function(e) {
 		//I have added one
 		//good job me
 		//tbd
-		var vx = mouse.x - worldToScreen(player.movable.px,camX,ctx.canvas.width);
-		var vy = mouse.y - worldToScreen(player.movable.py-35,camY,ctx.canvas.height);
+		var vx = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
+		var vy = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
 		var mag = Math.sqrt(vx * vx + vy * vy);
 		vx *= 500 / mag;
 		vy *= 500 / mag;
@@ -43,6 +43,7 @@ addEventListener("mousedown",function(e) {
 		var b = new Bullet(0,player.movable.pos.x,player.movable.pos.y-35,vx,vy,30);
 		bullets.push(b);
 		player.canShoot = false;
+		player.firing = true;
 	}
 });
 
@@ -102,7 +103,7 @@ cover.push(new Cover(500,10,30,80,40));
 var enemies = new Array();
 // enemies.push(new Enemy(400,10,50));
 // enemies.push(new Enemy(450,10,50));
-enemies.push(new Enemy(500,10,50));
+enemies.push(new Enemy(450,10,50));
 
 var bullets = new Array();
 
@@ -112,9 +113,9 @@ var camX = 0;
 var camY = 0;
 
 function init() {
-
 	animFrame( recursiveAnim );
 }
+
 function doRectanglesOverlap(r1, r2)
 {
 	return !(r2.x > r1.x + r1.w || 
@@ -122,6 +123,7 @@ function doRectanglesOverlap(r1, r2)
            r2.y > r1.y + r1.h ||
            r2.y + r2.h < r1.y);
 }
+
 function update() {
 	//Calculating dt
 	var now,fps, dt;
@@ -129,8 +131,7 @@ function update() {
 	fps = 1000 / (now - lastTime);
 	lastTime = now; 
 	dt = 1/fps;
-	
-	
+		
 	for (var b = 0; b < bullets.length ; b++) {
 		if(bullets[b].movable.pos.x < -trainWidth || 
 		bullets[b].movable.pos.x > trainWidth * 2 ||
@@ -144,7 +145,7 @@ function update() {
 			//  Enemy killing player
 			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),player.getCollisionRectangle()))
 			{
-				console.log("Player");
+				//console.log("Player");
 			}
 		}
 		else{
@@ -154,16 +155,17 @@ function update() {
 			{
 				if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),enemies[e].getCollisionRectangle()))
 				{
-					console.log("Enemy");
+					//console.log("Enemy");
 				}
 			}
 		}
 
+		
 		//  Colliding with cover
 		for (var c =0 ; c < cover.length; c++) {
 			if(doRectanglesOverlap(bullets[b].getCollisionRectangle(),cover[c].getCollisionRectangle()))
 				{
-					console.log("cover");
+					//console.log("cover");
 				}
 		};
 	};
@@ -247,13 +249,13 @@ function draw() {
 	for(var e = 0 ; e < enemies.length; e++){
 		enemies[e].render(ctx,camX,camY);
 	}
-
-	for (var i = bullets.length - 1; i >= 0; i--) {
-		bullets[i].render(ctx,camX,camY);
-	};
 	
 	for (var i = cover.length - 1; i >= 0; i--) {
 		cover[i].render(ctx,camX,camY);
+	};
+	
+	for (var i = bullets.length - 1; i >= 0; i--) {
+		bullets[i].render(ctx,camX,camY);
 	};
 }
 

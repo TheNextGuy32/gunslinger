@@ -42,6 +42,7 @@ function Person(x, y, collisionRadius)
 			if(this.shootTimer > this.shootCooldown)
 			{
 				this.canShoot = true;
+				this.firing = false;
 				this.shootTimer = 0;
 			}
 		}
@@ -82,11 +83,11 @@ function Person(x, y, collisionRadius)
 		disp.h = 0;
 		switch(this.movement) {
 		case MOVEMENT.CROUCHING:
-			disp.y = this.height;
+			disp.y = this.height / 2;
 			disp.h = this.height / 2;
 			break;
 		default:
-			disp.y = this.height / 2;
+			disp.y = this.height;
 			disp.h = this.height;
 			break;
 		}
@@ -111,6 +112,13 @@ function Person(x, y, collisionRadius)
 		
         var disp = this.getDisp();
 	    ctx.fillRect(sx-disp.x,sy-disp.y,disp.w,disp.h);
+		ctx.save();
+		ctx.fillStyle = 'yellow';
+		ctx.beginPath();
+		ctx.arc(sx,sy,2,0,2*Math.PI,false);
+		ctx.closePath();
+		ctx.fill();
+		ctx.restore();
         ctx.restore();
     };
 }
