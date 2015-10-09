@@ -25,17 +25,14 @@ addEventListener("keyup", function (e)
 }, false);
 
 addEventListener("mousedown",function(e) {
-	var mouse = {};
-	mouse.x = e.pageX - e.target.offsetLeft;
-	mouse.y = e.pageY - e.target.offsetTop;
 	if(player.canShoot){
 		//advising helper function(s?) to convert between world and screen space
 		//to make mouse interaction simpler
 		//I have added one
 		//good job me
 		//tbd
-		var vx = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
-		var vy = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
+		var vx = player.gunDir.x;
+		var vy = player.gunDir.y;
 		var mag = Math.sqrt(vx * vx + vy * vy);
 		vx *= 500 / mag;
 		vy *= 500 / mag;
@@ -45,6 +42,17 @@ addEventListener("mousedown",function(e) {
 		player.canShoot = false;
 		player.firing = true;
 	}
+});
+
+addEventListener("mousemove",function(e) {
+	var mouse = {};
+	mouse.x = e.pageX - e.target.offsetLeft;
+	mouse.y = e.pageY - e.target.offsetTop;
+	var dx = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
+	var dy = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
+	//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
+	player.gunDir.x = dx;
+	player.gunDir.y = dy;
 });
 
 function input() {

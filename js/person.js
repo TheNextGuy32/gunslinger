@@ -31,8 +31,9 @@ function Person(x, y, collisionRadius)
 	this.shootCooldown = 1;
 	this.shootTimer = 0;
 	this.firing = false;
+	this.gunDir = {x:0,y:0};
 	
-	this.fillStyle = "black";
+	this.fillStyle = "grey";
 
 	this.r = collisionRadius;
 
@@ -111,7 +112,22 @@ function Person(x, y, collisionRadius)
         ctx.fillStyle = this.fillStyle;
 		
         var disp = this.getDisp();
-	    ctx.fillRect(sx-disp.x,sy-disp.y,disp.w,disp.h);
+		ctx.save();
+		ctx.translate(sx,sy);
+	    ctx.fillRect(-disp.x,-disp.y,disp.w,disp.h);
+		
+		ctx.translate(0,-disp.y / 2);
+		//var rot = Math.sqrt(Math.pow(this.gunDir.x,2) + Math.pow(this.gunDir.y,2));
+		//rot = Math.acos(this.gunDir.x / rot);
+		var rot = Math.atan(this.gunDir.y / this.gunDir.x);
+		rot = (this.gunDir.x > 0) ? rot : Math.PI * 2 - rot;
+		//rot -= (this.gunDir.y > 0) ? 0 : Math.PI / 2;
+		//console.log("Rotation: " + rot + " X: " + this.gunDir.x + " Y: " + this.gunDir.y);
+		ctx.rotate(rot);
+		ctx.translate(disp.x,0);
+		ctx.fillStyle = 'black';
+		ctx.fillRect(-5,-5,20,10);
+		ctx.restore();
 		ctx.save();
 		ctx.fillStyle = 'yellow';
 		ctx.beginPath();
