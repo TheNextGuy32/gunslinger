@@ -36,7 +36,7 @@ addEventListener("mousedown",function(e) {
 		
 		var bulletStart = bulletVel.copy();
 		bulletStart.setMag(25);
-		bulletStart.y -= 25;
+		bulletStart.y -= 50;
 		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
 		var b = new Bullet(0,player.movable.pos.x+bulletStart.x,player.movable.pos.y+bulletStart.y,bulletVel.x,bulletVel.y,30);
 		b.id = FACTION.PLAYER;
@@ -199,13 +199,16 @@ function update() {
 				//  Player bullet
 				for(var e = 0 ; e < enemies.length ; e++)
 				{
-					if(doRectanglesOverlap(
-						bullets[b].getCollisionRectangle(),
-						enemies[e].getCollisionRectangle()))
+					if(enemies[e].active)
 					{
-						enemies[e].active = false;
-						bullets[b].active = false;
-						break;
+						if(doRectanglesOverlap(
+							bullets[b].getCollisionRectangle(),
+							enemies[e].getCollisionRectangle()))
+						{
+							enemies[e].active = false;
+							bullets[b].active = false;
+							break;
+						}
 					}
 				};
 			}
