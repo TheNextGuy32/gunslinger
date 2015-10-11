@@ -63,7 +63,13 @@ addEventListener("mousemove",function(e) {
 	player.gunDir = delta;
 });
 
-function input() {
+function input()
+{
+	//Debug level-reset key: K
+	if(keys[75])
+	{
+		resetLevel();
+	}
 
 	if ( keys [87] && !oldKeys[87] ) {    //W
 
@@ -151,17 +157,8 @@ function input() {
 }
 
 var player = new Person(10,10,50);
-
 var cover = new Array();
-cover.push(new Cover(400,10,40,30,10,5));
-cover.push(new Cover(250,10,40,30,10,5));
-cover.push(new Cover(100,10,40,30,10,5));
-
 var enemies = new Array();
- enemies.push(new Enemy(400,10,50));
-// enemies.push(new Enemy(450,10,50));
-enemies.push(new Enemy(450,10,50));
-
 var bullets = new Array();
 
 var lastTime = (+new Date);
@@ -172,6 +169,7 @@ var camY = 0;
 var now,fps, dt;
 function init() {
 	animFrame( recursiveAnim );
+	resetLevel();
 }
 
 function doRectanglesOverlap(r1, r2)
@@ -196,9 +194,9 @@ function update() {
 	{
 		if(bullets[b].active){
 			//  If its going off the map
-			if(	bullets[b].movable.pos.x < -trainWidth 		|| 
-				bullets[b].movable.pos.x > trainWidth  * 2 	||
-				bullets[b].movable.pos.y < -trainHeight 	||
+			if(	bullets[b].movable.pos.x < -15 		|| 
+				bullets[b].movable.pos.x > 935 	||
+				bullets[b].movable.pos.y < -trainHeight	||
 				bullets[b].movable.pos.y > trainHeight * 2) 
 			{
 				bullets[b].active = false;
@@ -368,6 +366,25 @@ function drawPauseScreen(){
 		ctx.restore();
 		
 	}
+	
+function resetLevel()
+{
+	//Reset bullets and player, create new arrays for cover & enemies
+	for (var b = 0; b < bullets.length ; b++)
+	{
+		bullets[b].active = false;
+	}
+	player.movable.pos = new Vector(10, 10);
+	cover = new Array();
+	enemies = new Array();
+	
+	//Fill arrays - should be changed to be more level-specific in the future
+	cover.push(new Cover(400,10,40,30,10,5));
+	cover.push(new Cover(250,10,40,30,10,5));
+	cover.push(new Cover(100,10,40,30,10,5));
+	enemies.push(new Enemy(400,10,50));
+	enemies.push(new Enemy(450,10,50));
+}
 window.onblur = function(){
 	console.log("blur at" + Date());
 	pauseGame();
