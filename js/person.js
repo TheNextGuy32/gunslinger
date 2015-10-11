@@ -10,7 +10,8 @@ Object.seal({
 	WALKING: 1,
 	RUNNING: 2,
 	SLIDING: 3,
-	CROUCHING: 4
+	CROUCHING: 4,
+	BACKING: 5
 });
 
 const walkSpeed = 200;
@@ -21,8 +22,9 @@ function Person(x, y, collisionRadius)
 	this.movable = new Movable(x,y,10);
 	this.animation = new Animation(x,y,10);
 
-	this.width = 50;
-	this.height = 70;
+	this.baseWidth = 50;
+	this.baseHeight = 70;
+	this.disp = {x:0,y:0,w:0,h:0};
 	
 	this.facing = FACING.LEFT;
 	this.movement = MOVEMENT.STANDING;
@@ -51,6 +53,7 @@ function Person(x, y, collisionRadius)
 	
 	this.update = function(dt)
 	{
+		this.updateDisp();
 		this.updateShoot(dt);
 
 		//  Movable updating
@@ -76,33 +79,31 @@ function Person(x, y, collisionRadius)
 		this.animation.update(dt);
 	};
 	
-	this.getDisp = function() {
-		var disp = {};
-		disp.x = this.width / 2;
-		disp.y = 0;
-		disp.w = this.width;
-		disp.h = 0;
+	this.updateDisp = function() {
+		this.disp.w = this.baseWidth;
+		this.disp.h = 0;
+		this.disp.x = this.disp.w / 2;
+		this.disp.y = 0;
 		switch(this.movement) {
 		case MOVEMENT.CROUCHING:
-			disp.y = this.height / 2;
-			disp.h = this.height / 2;
+			this.disp.h = this.baseHeight / 2;
+			this.disp.y = this.disp.h;
 			break;
 		default:
-			disp.y = this.height;
-			disp.h = this.height;
+			this.disp.h = this.baseHeight;
+			this.disp.y = this.disp.h;
 			break;
 		}
-		return disp;
+		//console.log(this.disp);
 	}
 
 	this.getCollisionRectangle = function()
 	{
-		var disp = this.getDisp();
 	    return { 
-	    	x:this.movable.pos.x - disp.x, 
-	    	y:this.movable.pos.y - disp.y, 
-	    	w: disp.w, 
-	    	h: disp.h };
+	    	x:this.movable.pos.x - this.disp.x, 
+	    	y:this.movable.pos.y - this.disp.y, 
+	    	w: this.disp.w, 
+	    	h: this.disp.h };
 	}
 
     this.render = function(ctx,camX,camY)
@@ -114,29 +115,53 @@ function Person(x, y, collisionRadius)
         ctx.save();
         ctx.fillStyle = this.fillStyle;
 		
-        var disp = this.getDisp();
-		ctx.save();
-		ctx.translate(sx,sy);
-	    ctx.fillRect(-disp.x,-disp.y,disp.w,disp.h);
+		this.drawBody(ctx,sx,sy);
+		this.drawGun(ctx,sx,sy - this.disp.y / 2);
 		
-		ctx.translate(0,-disp.y / 2);
-		//var rot = Math.sqrt(Math.pow(this.gunDir.x,2) + Math.pow(this.gunDir.y,2));
-		//rot = Math.acos(this.gunDir.x / rot);
+		this.drawDebug(ctx,sx,sy);
+		
+        ctx.restore();
+    };
+	
+	this.drawBody = function(ctx,x,y,moreDisp) {
+		//moreDisp is optional, it will be either set or 0
+		moreDisp = moreDisp || 0;
+		ctx.save();
+		ctx.translate(x,y);
+	    ctx.fillRect(-this.disp.x,-this.disp.y,this.disp.w,this.disp.h);
+		ctx.restore();
+	},
+	
+	this.drawGun = function(ctx,x,y,moreDisp) {
+		moreDisp = moreDisp || 0;
+		
+		ctx.save();
+		
+		ctx.translate(x,y);
 		var rot = Math.atan(this.gunDir.y / this.gunDir.x);
 		rot = (this.gunDir.x >= 0) ? rot : Math.PI + rot - Math.PI * 2;
-		//console.log("Rotation: " + rot + " X: " + this.gunDir.x + " Y: " + this.gunDir.y);
 		ctx.rotate(rot);
-		ctx.translate(disp.x,0);
+		ctx.translate(this.disp.x 
+		+ this.baseWidth * Math.min(this.gunDir.getMag() / (canvas.width / 3),1),0);
+		
 		ctx.fillStyle = 'black';
-		ctx.fillRect(-5,-5,20,10);
+		var bw = 20, bh = 10;
+		ctx.fillRect(-bw/2,-bh/2,bw,bh);
+		
 		ctx.restore();
+	}
+	
+	this.drawDebug = function(ctx,x,y,moreDisp) {
+		moreDisp = moreDisp || 0;
+		
 		ctx.save();
 		ctx.fillStyle = 'yellow';
 		ctx.beginPath();
-		ctx.arc(sx,sy,2,0,2*Math.PI,false);
+		ctx.arc(x,y,2,0,2*Math.PI,false);
+		ctx.arc(x,y - this.disp.y / 2,2,0,2*Math.PI,false);
 		ctx.closePath();
 		ctx.fill();
 		ctx.restore();
-        ctx.restore();
-    };
+	}
+	
 }

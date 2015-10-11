@@ -39,8 +39,9 @@ addEventListener("mousedown",function(e) {
 		bulletAccel = bulletAccel.normalize();
 		
 		var bulletStart = bulletAccel.copy();
-		bulletStart.setMag(25);
-		bulletStart.y -= 50;
+		bulletStart.setMag(player.disp.x + player.baseWidth 
+		* Math.min(player.gunDir.getMag() / (canvas.width / 3),1));
+		bulletStart.y -= player.disp.y / 2;
 		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
 		var b = new Bullet(0,player.movable.pos.x+bulletStart.x,player.movable.pos.y+bulletStart.y,bulletAccel.x,bulletAccel.y,30);
 		b.id = FACTION.PLAYER;
@@ -359,6 +360,7 @@ function fillText(string, x, y, css, color) {
 function drawPauseScreen(){
 		ctx.save();
 		ctx.fillStyle = "black";
+		ctx.globalAlpha = 0.75;
 		ctx.fillRect(0,0,canvas.width,canvas.height);
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
@@ -388,7 +390,6 @@ var recursiveAnim = function() {
     update();
 	
 	if(gamePaused){
-		ctx.globalAlpha = 0.75;
 		drawPauseScreen(ctx);
 		return;
 	}

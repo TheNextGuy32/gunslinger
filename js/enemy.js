@@ -9,17 +9,21 @@ function Enemy(x,y,collisionRadius) {
 	this.active = true;
 	
 	this.fillStyle = "red";
-	var gunDisplacement = new Vector(20, -30);
 	
 	this.fireAt = function(target) {
+		
 		if(!this.canShoot)
 			return;
 		if(this.bullets > 0) {
-			var a = this.movable.pos.sub(player.movable.pos);
-			a.y -= (player.movement == MOVEMENT.STANDING) ? 0 : 15;
-			a = a.normalize().mult(-1);
-			var disp = this.getDisp();
-			var b = new Bullet(1,this.movable.pos.x + this.facing * 5,this.movable.pos.y-disp.y - 10,a.x,a.y,5);
+			var a = this.gunDir.copy();
+			//a.y -= (player.movement === MOVEMENT.CROUCHING) ? 15 : 0;
+			a = a.normalize();
+			var startPos = a.copy();
+			startPos.setMag(this.disp.x + this.baseWidth 
+			* Math.min(this.gunDir.getMag() / (canvas.width / 3),1));
+			startPos.y -= this.disp.y / 2;
+			var b = new Bullet(1,this.movable.pos.x + startPos.x
+			,this.movable.pos.y + startPos.y,a.x,a.y,5);
 			b.id = FACTION.ENEMY;
 			bullets.push(b);
 			
@@ -35,6 +39,12 @@ function Enemy(x,y,collisionRadius) {
 	
 	this.update = function(dt)
 	{
+		this.updateDisp();
+		
+		var pPos = player.movable.pos.sub(new Vector(0,player.disp.y / 2));//their position
+		var ePos = this.movable.pos.sub(new Vector(0,this.disp.y / 2));//our position
+		this.gunDir = pPos.sub(ePos);
+		
 		this.updateShoot(dt);
 		//if the player is firing on you, always fire back rn
 		 if(player.firing) {
@@ -42,18 +52,22 @@ function Enemy(x,y,collisionRadius) {
 		 }
 		 var dist = player.movable.pos.x - this.movable.pos.x;
 		//close the distance between you and the player
-		if(Math.abs(dist) > this.targetRadius) {
+		if(this.movement != MOVEMENT.BACKING && Math.abs(dist) > this.targetRadius) {
 			this.movement = MOVEMENT.WALKING;
 			this.velocity = dist;
 			this.velocity *= 50 / this.targetRadius;//makes it proportional to distance
 			this.facing = Math.sign(this.velocity);
 			//console.log(this.facing);
 		}
-		//move away from the player if they start moving towards you at close range
-		else if(player.movement != MOVEMENT.STANDING) {
+		//if you're backing up and the player has stopped
+		else if(this.movement === MOVEMENT.BACKING && player.movement != MOVEMENT.WALKING) {
 			this.movement = MOVEMENT.WALKING;
-			this.velocity = -dist;
-			this.velocity /= 100 / this.targetRadius;//makes it inversely proportional to distance
+		}
+		//move away from the player if they start moving towards you at close range
+		else if(player.movement == MOVEMENT.WALKING) {
+			this.movement = MOVEMENT.BACKING;
+			this.velocity = -this.targetRadius / dist;//makes it inversely proportional to distance
+			this.velocity *= 150;
 			this.facing = -Math.sign(this.velocity);
 		}
 		//fire if the player isn't already firing at you and you've closed the distance
