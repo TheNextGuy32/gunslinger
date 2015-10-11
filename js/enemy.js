@@ -7,6 +7,7 @@ function Enemy(x,y,collisionRadius) {
 	this.bullets = 6;
 	//this.alerted = false;
 	this.active = true;
+	this.faction = FACTION.ENEMY;
 	
 	this.fillStyle = "red";
 	
@@ -15,20 +16,7 @@ function Enemy(x,y,collisionRadius) {
 		if(!this.canShoot)
 			return;
 		if(this.bullets > 0) {
-			var a = this.gunDir.copy();
-			//a.y -= (player.movement === MOVEMENT.CROUCHING) ? 15 : 0;
-			a = a.normalize();
-			var startPos = a.copy();
-			startPos.setMag(this.disp.x + this.baseWidth 
-			* Math.min(this.gunDir.getMag() / (canvas.width / 3),1));
-			startPos.y -= this.disp.y / 2;
-			var b = new Bullet(1,this.movable.pos.x + startPos.x
-			,this.movable.pos.y + startPos.y,a.x,a.y,5);
-			b.id = FACTION.ENEMY;
-			bullets.push(b);
-			
-			this.bullets--;
-			this.canShoot = false;
+			this.fireBullet();
 		}
 		else {
 			this.bullets = 6;

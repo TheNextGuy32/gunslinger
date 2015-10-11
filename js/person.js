@@ -26,8 +26,9 @@ function Person(x, y, collisionRadius)
 	this.baseHeight = 70;
 	this.disp = {x:0,y:0,w:0,h:0};
 	
-	this.facing = FACING.LEFT;
+	this.facing = FACING.RIGHT;
 	this.movement = MOVEMENT.STANDING;
+	this.faction = FACTION.PLAYER;
 
 	this.canShoot = true;
 	this.shootCooldown = 0.5;
@@ -49,6 +50,27 @@ function Person(x, y, collisionRadius)
 				this.shootTimer = 0;
 			}
 		}
+	}
+	
+	this.fireBullet = function() { 
+		var bulletAccel = this.gunDir.copy().normalize();
+		var bulletStart = bulletAccel.copy();
+		bulletStart.setMag(this.disp.x + this.baseWidth 
+		* Math.min(this.gunDir.getMag() / (canvas.width / 3),1));
+		bulletStart.y -= this.disp.y / 2;
+		var b = new Bullet(this.faction,this.movable.pos.x + bulletStart.x
+		,this.movable.pos.y + bulletStart.y,bulletAccel.x,bulletAccel.y,5);
+		b.id = this.faction;
+		bullets.push(b);
+		
+		this.bullets--;
+		this.canShoot = false;
+		this.firing = true;
+		
+		//push back
+		//temporary, will be fixed with future system
+		//also doesn't reflect when bullets are fired backward oops
+		this.movable.pos.x -= 5 * this.facing;
 	}
 	
 	this.update = function(dt)
@@ -139,10 +161,16 @@ function Person(x, y, collisionRadius)
 		
 		ctx.translate(x,y);
 		var rot = Math.atan(this.gunDir.y / this.gunDir.x);
-		rot = (this.gunDir.x >= 0) ? rot : Math.PI + rot - Math.PI * 2;
+		rot += (this.gunDir.x >= 0) ? 0 : Math.PI;
+		//this is for recoil
+		var recoilDir = Math.sign(Math.PI - (rot + Math.PI / 2));
+		rot -= recoilDir * ((this.canShoot) ? 0 : Math.PI / 12);
 		ctx.rotate(rot);
-		ctx.translate(this.disp.x 
-		+ this.baseWidth * Math.min(this.gunDir.getMag() / (canvas.width / 3),1),0);
+		var gunx = this.disp.x;
+		gunx += this.baseWidth * Math.min(this.gunDir.getMag() / (canvas.width / 3),1);
+		gunx -= ((this.canShoot) ? 0 : this.disp.x / 2);
+		ctx.translate(gunx,0);
+		ctx.rotate(recoilDir * ((this.canShoot) ? 0 : -Math.PI / 4));
 		
 		ctx.fillStyle = 'black';
 		var bw = 20, bh = 10;
@@ -159,7 +187,9 @@ function Person(x, y, collisionRadius)
 		ctx.beginPath();
 		ctx.arc(x,y,2,0,2*Math.PI,false);
 		ctx.arc(x,y - this.disp.y / 2,2,0,2*Math.PI,false);
-		ctx.closePath();
+		ctx.fill();
+		ctx.beginPath();
+		ctx.arc(x + this.disp.x * this.facing,y - this.disp.y / 2,2,0,2*Math.PI,false);
 		ctx.fill();
 		ctx.restore();
 	}

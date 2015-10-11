@@ -30,24 +30,7 @@ addEventListener("mousedown",function(e) {
 		return;
 	}
 	if(player.canShoot){
-		//advising helper function(s?) to convert between world and screen space
-		//to make mouse interaction simpler
-		//I have added one
-		//good job me
-		//tbd
-		var bulletAccel = player.gunDir.copy();
-		bulletAccel = bulletAccel.normalize();
-		
-		var bulletStart = bulletAccel.copy();
-		bulletStart.setMag(player.disp.x + player.baseWidth 
-		* Math.min(player.gunDir.getMag() / (canvas.width / 3),1));
-		bulletStart.y -= player.disp.y / 2;
-		//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
-		var b = new Bullet(0,player.movable.pos.x+bulletStart.x,player.movable.pos.y+bulletStart.y,bulletAccel.x,bulletAccel.y,30);
-		b.id = FACTION.PLAYER;
-		bullets.push(b);
-		player.canShoot = false;
-		player.firing = true;
+		player.fireBullet();
 	}
 });
 
@@ -212,6 +195,8 @@ function update() {
 					bullets[b].getCollisionRectangle(),
 					player.getCollisionRectangle()))
 				{
+					//temporary
+					player.movable.pos.x -= 5 * player.facing;
 					bullets[b].active = false;
 				}
 			}
@@ -226,6 +211,8 @@ function update() {
 							bullets[b].getCollisionRectangle(),
 							enemies[e].getCollisionRectangle()))
 						{
+							//temporary
+							enemies[e].movable.pos.x -= 5 * enemies[e].facing;
 							enemies[e].active = false;
 							bullets[b].active = false;
 							break;
