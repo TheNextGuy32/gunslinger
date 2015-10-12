@@ -139,7 +139,8 @@ function input()
 
 }
 
-var player = new Person(10,10,50);
+var choochoo = new Train(-70, 10, 1250, 500);
+var player = new Person(10,10,50); //Does changing the y value actually do anything?
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
@@ -177,10 +178,10 @@ function update() {
 	{
 		if(bullets[b].active){
 			//  If its going off the map
-			if(	bullets[b].movable.pos.x < -15 		|| 
-				bullets[b].movable.pos.x > 935 	||
-				bullets[b].movable.pos.y < -trainHeight	||
-				bullets[b].movable.pos.y > trainHeight * 2) 
+			if(	bullets[b].movable.pos.x < -30	|| 
+				bullets[b].movable.pos.x > 1135 	||
+				bullets[b].movable.pos.y < -1*choochoo.height	||
+				bullets[b].movable.pos.y > choochoo.height * 2) 
 			{
 				bullets[b].active = false;
 				continue;
@@ -252,48 +253,6 @@ function update() {
 	oldKeys = $.extend( {}, keys );
 }
 
-var trainWidth = 1000;
-var trainHeight = 200;
-
-function drawTrain(x,y,cx,cy)
-{
-	var wheelRadius = 20;
-	var wheelSpacing = 300;
-	var sx = x - cx + (ctx.canvas.width/2);
-    var sy = y - cy + (ctx.canvas.height/2);
-
-	ctx.save();
-	
-	//Train Car (Brown Background)
-	var trainBackgroundGradient = ctx.createLinearGradient(sx, sy-trainHeight, sx, sy);
-	trainBackgroundGradient.addColorStop(0, "#2b1d0e");
-	trainBackgroundGradient.addColorStop(1, "#8b5d2e");
-	ctx.fillStyle = trainBackgroundGradient;
-	ctx.fillRect(sx,sy-200,1000,200);
-	
-	//Train Wheels
-	var trainWheelGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, wheelRadius);
-	trainWheelGradient.addColorStop(0, "#333333");
-	trainWheelGradient.addColorStop(1, "#000000");
-	ctx.fillStyle = trainWheelGradient;
-	ctx.save();
-	ctx.translate(sx+wheelRadius, sy+wheelRadius);
-	for(var i = wheelRadius; i < trainWidth; i += wheelSpacing)
-	{
-		ctx.beginPath();
-		ctx.arc(0, 0, wheelRadius, 0, Math.PI*2, false);
-		ctx.closePath();
-		ctx.fill();
-		ctx.translate(wheelSpacing, 0);
-	}
-	ctx.restore();
-
-	//Train Rail
-	ctx.fillStyle = "#ffffff";
-	ctx.fillRect(0, sy+wheelRadius*1.9, ctx.canvas.width, 5);
-	ctx.restore();
-}
-
 function worldToScreen(coord,camCoord,ctxDim) {
 	//sloppy and one dimensional for now, will refine after revamp to object "vectors"
 	return coord - camCoord + ctxDim / 2;
@@ -307,9 +266,9 @@ function draw() {
 	ctx.restore();
 
 	camX = player.movable.pos.x;
-	camY = player.movable.pos.y;
+	camY = player.movable.pos.y-200;
 	
-	drawTrain(-40,10,camX,camY);
+	choochoo.render(ctx, camX, camY);
 	
 	player.render(ctx,camX,camY);
 	
