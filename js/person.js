@@ -22,8 +22,8 @@ function Person(x, y, collisionRadius)
 	this.movable = new Movable(x,y,10);
 	this.animation = new Animation(x,y,10);
 
-	this.baseWidth = 50;
-	this.baseHeight = 70;
+	this.baseWidth = 75;
+	this.baseHeight = 150;
 	this.disp = {x:0,y:0,w:0,h:0};
 	
 	this.facing = FACING.RIGHT;
@@ -182,7 +182,7 @@ function Person(x, y, collisionRadius)
 		ctx.rotate(recoilDir * ((this.canShoot) ? 0 : -Math.PI / 4));
 		
 		ctx.fillStyle = 'black';
-		var bw = 20, bh = 10;
+		var bw = 40, bh = 20;
 		ctx.fillRect(-bw/2,-bh/2,bw,bh);
 		
 		ctx.restore();
