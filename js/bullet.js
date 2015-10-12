@@ -7,23 +7,22 @@ Object.seal({
 	ENEMY:1	
 });
 
-function Bullet(factionID, x, y, ax, ay, collisionRadius) 
+function Bullet(factionID, x, y, ax, ay) 
 {
 	this.id = factionID;
 	this.movable = new Movable(x,y,10);
 	this.movable.accel.x = ax * bulletSpeed;
 	this.movable.accel.y = ay * bulletSpeed;
+	this.collider = new BoundingBox(new Vector(x,y),new Vector(5,5));
 	this.animation = new Animation(x,y,10);
 	
 	this.active = true;
 
-	this.r = collisionRadius;
-
 	this.update = function(dt)
 	{
 		//  Movable updating
-
 		this.movable.update(dt);
+		this.collider.update(this.movable.pos.sub(this.collider.dims));
 
 		//  Animation updating
 		this.animation.worldX = this.movable.pos.x;
@@ -31,15 +30,6 @@ function Bullet(factionID, x, y, ax, ay, collisionRadius)
 
 		this.animation.update(dt);
 	};
-
-	this.getCollisionRectangle = function()
-	{
-		return {
-	        	x:this.movable.pos.x-2.5,
-	        	y:this.movable.pos.y-2.5,
-	        	w:5,
-	        	h:5};
-	}
 
     this.render = function(ctx,cx,cy)
     {
@@ -50,7 +40,8 @@ function Bullet(factionID, x, y, ax, ay, collisionRadius)
         ctx.save();
         
         ctx.fillstyle = "black";
-        ctx.fillRect(sx-2.5,sy-2.5,5,5);
+        ctx.fillRect(sx-this.collider.dims.x,sy-this.collider.dims.y / 2
+		,this.collider.dims.x,this.collider.dims.y);
 
         ctx.restore();
     };

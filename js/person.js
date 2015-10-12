@@ -17,14 +17,16 @@ Object.seal({
 const walkSpeed = 200;
 const runSpeed = 300;
 
-function Person(x, y, collisionRadius) 
+function Person(x, y) 
 {
-	this.movable = new Movable(x,y,10);
-	this.animation = new Animation(x,y,10);
-
 	this.baseWidth = 50;
 	this.baseHeight = 70;
-	this.disp = {x:0,y:0,w:0,h:0};
+	this.disp = new BoundingBox(new Vector(0,0),new Vector(0,0));
+	
+	this.movable = new Movable(x,y,10);
+	this.collider = new BoundingBox(new Vector(x,y),new Vector(this.baseWidth,this.baseHeight));
+	
+	this.animation = new Animation(x,y,10);
 	
 	this.facing = FACING.RIGHT;
 	this.movement = MOVEMENT.STANDING;
@@ -37,8 +39,6 @@ function Person(x, y, collisionRadius)
 	this.gunDir = new Vector(0, 0);
 	
 	this.fillStyle = "lightgrey";
-
-	this.r = collisionRadius;
 
 	this.updateShoot = function(dt) {
 		if(!this.canShoot){
@@ -55,11 +55,11 @@ function Person(x, y, collisionRadius)
 	this.fireBullet = function() { 
 		var bulletAccel = this.gunDir.copy().normalize();
 		var bulletStart = bulletAccel.copy();
-		bulletStart.setMag(this.disp.x + this.baseWidth 
+		bulletStart.setMag(this.disp.coords.x + this.baseWidth 
 		* Math.min(this.gunDir.getMag() / (canvas.width / 3),1));
-		bulletStart.y -= this.disp.y / 2;
+		bulletStart.y -= this.disp.coords.y / 2;
 		var b = new Bullet(this.faction,this.movable.pos.x + bulletStart.x
-		,this.movable.pos.y + bulletStart.y,bulletAccel.x,bulletAccel.y,5);
+		,this.movable.pos.y + bulletStart.y,bulletAccel.x,bulletAccel.y);
 		b.id = this.faction;
 		bullets.push(b);
 		
@@ -93,6 +93,7 @@ function Person(x, y, collisionRadius)
 		
 		this.movable.vel.x = velocity;
 		this.movable.update(dt);
+		this.collider.update(this.movable.pos.sub(this.disp.coords),this.disp.dims);
 
 		//  Animation updating
 		this.animation.worldX = this.movable.pos.x;
@@ -102,30 +103,21 @@ function Person(x, y, collisionRadius)
 	};
 	
 	this.updateDisp = function() {
-		this.disp.w = this.baseWidth;
-		this.disp.h = 0;
-		this.disp.x = this.disp.w / 2;
-		this.disp.y = 0;
+		this.disp.dims.x = this.baseWidth;
+		this.disp.dims.y = 0;
+		this.disp.coords.x = this.disp.dims.x / 2;
+		this.disp.coords.y = 0;
 		switch(this.movement) {
 		case MOVEMENT.CROUCHING:
-			this.disp.h = this.baseHeight / 2;
-			this.disp.y = this.disp.h;
+			this.disp.dims.y = this.baseHeight / 2;
+			this.disp.coords.y = this.disp.dims.y;
 			break;
 		default:
-			this.disp.h = this.baseHeight;
-			this.disp.y = this.disp.h;
+			this.disp.dims.y = this.baseHeight;
+			this.disp.coords.y = this.disp.dims.y;
 			break;
 		}
 		//console.log(this.disp);
-	}
-
-	this.getCollisionRectangle = function()
-	{
-	    return { 
-	    	x:this.movable.pos.x - this.disp.x, 
-	    	y:this.movable.pos.y - this.disp.y, 
-	    	w: this.disp.w, 
-	    	h: this.disp.h };
 	}
 
     this.render = function(ctx,camX,camY)
@@ -138,7 +130,7 @@ function Person(x, y, collisionRadius)
         ctx.fillStyle = this.fillStyle;
 		
 		this.drawBody(ctx,sx,sy);
-		this.drawGun(ctx,sx,sy - this.disp.y / 2);
+		this.drawGun(ctx,sx,sy - this.disp.coords.y / 2);
 		
 		this.drawDebug(ctx,sx,sy);
 		
@@ -150,7 +142,7 @@ function Person(x, y, collisionRadius)
 		moreDisp = moreDisp || 0;
 		ctx.save();
 		ctx.translate(x,y);
-	    ctx.fillRect(-this.disp.x,-this.disp.y,this.disp.w,this.disp.h);
+	    ctx.fillRect(-this.disp.coords.x,-this.disp.coords.y,this.disp.dims.x,this.disp.dims.y);
 		ctx.restore();
 	},
 	
@@ -166,9 +158,9 @@ function Person(x, y, collisionRadius)
 		var recoilDir = Math.sign(Math.PI - (rot + Math.PI / 2));
 		rot -= recoilDir * ((this.canShoot) ? 0 : Math.PI / 12);
 		ctx.rotate(rot);
-		var gunx = this.disp.x;
+		var gunx = this.disp.coords.x;
 		gunx += this.baseWidth * Math.min(this.gunDir.getMag() / (canvas.width / 3),1);
-		gunx -= ((this.canShoot) ? 0 : this.disp.x / 2);
+		gunx -= ((this.canShoot) ? 0 : this.disp.coords.x / 2);
 		ctx.translate(gunx,0);
 		ctx.rotate(recoilDir * ((this.canShoot) ? 0 : -Math.PI / 4));
 		
@@ -186,11 +178,18 @@ function Person(x, y, collisionRadius)
 		ctx.fillStyle = 'yellow';
 		ctx.beginPath();
 		ctx.arc(x,y,2,0,2*Math.PI,false);
-		ctx.arc(x,y - this.disp.y / 2,2,0,2*Math.PI,false);
+		ctx.arc(x,y - this.disp.coords.y / 2,2,0,2*Math.PI,false);
 		ctx.fill();
 		ctx.beginPath();
-		ctx.arc(x + this.disp.x * this.facing,y - this.disp.y / 2,2,0,2*Math.PI,false);
+		ctx.arc(x + this.disp.coords.x * this.facing,y - this.disp.coords.y / 2,2,0,2*Math.PI,false);
 		ctx.fill();
+		
+		ctx.strokeStyle = 'yellow';
+		ctx.lineWidth = 3;
+		var bbx = x - this.collider.dims.x / 2;
+		var bby = y - this.collider.dims.y;
+		ctx.strokeRect(bbx,bby
+		,this.collider.dims.x,this.collider.dims.y);
 		ctx.restore();
 	}
 	

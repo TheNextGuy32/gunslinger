@@ -1,10 +1,10 @@
 "use strict";
 
-var TABLE =  
+var TABLE_STATE =  
 Object.seal({
-	LEFT:-1,
+	LEFT:-Math.PI / 2,
 	UP:0,
-	RIGHT:1
+	RIGHT:Math.PI / 2
 });
 
 function Cover (xPos, yPos, width, height, thickness,legWidth) {
@@ -21,85 +21,28 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
 	this.legWidth = legWidth
 
 	this.movable = new Movable(xPos,yPos,10);
+	this.collider = new BoundingBox(new Vector(xPos,yPos),new Vector(width,height));
+	
 	this.animation = new Animation(xPos,yPos,10);
 
-	this.tableStatus = TABLE.UP;
+	this.tableState = TABLE_STATE.UP;//for now, I have removed proper table collisions
+	//it will be fixed when SAT is implemented
 
-	this.getPlayerCollisionRectangle = function()
-	{
-		if(this.tableStatus == TABLE.RIGHT)
-		{
-			return {
-		        	x:this.movable.pos.x + (this.w/2),
-		        	y:this.movable.pos.y - (this.h),
-		        	w:this.h,
-		        	h:this.w
-		        };
-        }
-        else if(this.tableStatus == TABLE.LEFT)
-		{
-			return {
-		        	x:this.movable.pos.x - (this.w/2) - this.h,
-		        	y:this.movable.pos.y - (this.h),
-		        	w:this.h,
-		        	h:this.w
-		        };
-        }
-        else
-        {
-			return {
-	        	x:this.movable.pos.x- (this.w/2),
-	        	y:this.movable.pos.y- (this.h),
-	        	w:this.w,
-	        	h:this.h
-        	}; 	        	
-        }
-	}
-
-	this.getBulletCollisionRectangle = function()
-	{
-		if(this.tableStatus == TABLE.RIGHT)
-		{
-			return {
-		        	x:this.movable.pos.x + (this.w/2) + this.h - this.thickness,
-		        	y:this.movable.pos.y - (this.h),
-		        	w:this.thickness,
-		        	h:this.w
-		        };
-        }
-        else if(this.tableStatus == TABLE.LEFT)
-		{
-			return {
-		        	x:this.movable.pos.x - (this.w/2) - this.h,
-		        	y:this.movable.pos.y - (this.h),
-		        	w:this.thickness,
-		        	h:this.w
-		        };
-        }
-        else
-        {
-			return {
-	        	x:this.movable.pos.x - (this.w/2),
-	        	y:this.movable.pos.y - (this.h),
-	        	w:this.w,
-	        	h:this.thickness
-        	}; 	        	
-        }
-	}
-
-//functions
-	this.alterTableStatus = function(direction){
+	//functions
+	this.alterTableState = function(direction){
 		//handles tipping cover into tipped state
-		if(this.tableStatus != TABLE.UP)
+		if(this.tableState != TABLE_STATE.UP)
 		{
-			this.tableStatus = TABLE.UP;
+			this.tableState = TABLE_STATE.UP;
 		}
 		else
 		{
-			this.tableStatus = direction;
+			this.tableState = direction;
 		}
-
+		this.collider.update(this.movable.pos.sub(new Vector(this.collider.dims.x / 2,this.collider.dims.y))
+		,this.collider.dims,this.tableState);
 	};
+	
 	//draws cover
 	this.render = function(ctx,cx,cy){
     	//console.log("Pos: " + sx+", " + sy);
@@ -110,12 +53,13 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
         
         ctx.fillStyle = "brown";
 
-        if(this.tableStatus == TABLE.UP){
+		//this needs to be fixed BAD
+        if(this.tableState == TABLE_STATE.UP){
 	        ctx.fillRect(sx-(this.w/2),sy-this.h,this.legWidth,this.h);
 	        ctx.fillRect(sx+(this.w/2)-this.legWidth,sy-this.h,this.legWidth,this.h);
 	        ctx.fillRect(sx-(this.w/2),sy-this.h,this.w,this.thickness);
         }
-        else if(this.tableStatus == TABLE.LEFT)
+        else if(this.tableState == TABLE_STATE.LEFT)
         {
         	ctx.fillRect(sx-(this.w/2)-this.h,sy-this.w,this.h,this.legWidth);
         	ctx.fillRect(sx-(this.w/2)-this.h,sy-this.w,this.thickness,this.w);

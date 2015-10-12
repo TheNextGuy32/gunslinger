@@ -7,6 +7,8 @@ var keys = {};
 var oldKeys = {};
 addEventListener("keydown", function (e) 
 {
+	//...why are we doing it this way???
+	//what's wrong with a simple flip?
 	if(!keys.hasOwnProperty(e.keyCode))
 	{
 		 // The key is newly down!
@@ -57,23 +59,21 @@ function input()
 	if ( keys [87] && !oldKeys[87] ) {    //W
 
 		for (var c =0 ; c < cover.length; c++) {
-			if(doRectanglesOverlap(
-				player.getCollisionRectangle(),
-				cover[c].getPlayerCollisionRectangle()))
+			if(player.collider.intersects(cover[c].collider))
 			{
-				console.log("Was " + cover[c].tableStatus);
-				console.log(player.getCollisionRectangle());
-				console.log(cover[c].getPlayerCollisionRectangle());
+				console.log("Was " + cover[c].tableState);
+				console.log(player.collider);
+				console.log(cover[c].collider);
 				
 				if(player.movable.pos.x <= cover[c].xPos)
 				{
-					cover[c].alterTableStatus(1);
+					cover[c].alterTableState(TABLE_STATE.LEFT);
 				}
 				else
 				{
-					cover[c].alterTableStatus(-1);
+					cover[c].alterTableState(TABLE_STATE.RIGHT);
 				}
-				console.log("Now " + cover[c].tableStatus);
+				console.log("Now " + cover[c].tableState);
 				console.log("- - -");
 				break;
 			}
@@ -139,7 +139,7 @@ function input()
 
 }
 
-var player = new Person(10,10,50);
+var player = new Person(10,10);
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
@@ -153,14 +153,6 @@ var now,fps, dt;
 function init() {
 	animFrame( recursiveAnim );
 	resetLevel();
-}
-
-function doRectanglesOverlap(r1, r2)
-{
-	return !(r2.x > r1.x + r1.w || 
-           r2.x+r2.w < r1.x || 
-           r2.y > r1.y + r1.h ||
-           r2.y + r2.h < r1.y);
 }
 
 function update() {
@@ -189,9 +181,7 @@ function update() {
 			if(bullets[b].id == FACTION.ENEMY){
 				
 				//  Enemy killing player
-				if(doRectanglesOverlap(
-					bullets[b].getCollisionRectangle(),
-					player.getCollisionRectangle()))
+				if(player.collider.intersects(bullets[b].collider))
 				{
 					//temporary
 					player.movable.pos.x -= 5 * player.facing;
@@ -205,9 +195,7 @@ function update() {
 				{
 					if(enemies[e].active)
 					{
-						if(doRectanglesOverlap(
-							bullets[b].getCollisionRectangle(),
-							enemies[e].getCollisionRectangle()))
+						if(enemies[e].collider.intersects(bullets[b].collider))
 						{
 							//temporary
 							enemies[e].movable.pos.x -= 5 * enemies[e].facing;
@@ -222,9 +210,7 @@ function update() {
 			//  Colliding with cover
 			for (var c =0 ; c < cover.length; c++) 
 			{	
-				if(doRectanglesOverlap(
-					bullets[b].getCollisionRectangle(),
-					cover[c].getBulletCollisionRectangle()))
+				if(cover[c].collider.intersects(bullets[b].collider))
 				{
 					bullets[b].active = false;
 				}
@@ -369,8 +355,8 @@ function resetLevel()
 	cover.push(new Cover(400,10,40,30,10,5));
 	cover.push(new Cover(250,10,40,30,10,5));
 	cover.push(new Cover(100,10,40,30,10,5));
-	enemies.push(new Enemy(400,10,50));
-	enemies.push(new Enemy(450,10,50));
+	enemies.push(new Enemy(400,10));
+	enemies.push(new Enemy(450,10));
 }
 window.onblur = function(){
 	console.log("blur at" + Date());
