@@ -193,8 +193,10 @@ function update() {
 					bullets[b].getCollisionRectangle(),
 					player.getCollisionRectangle()))
 				{
-					//temporary
-					player.movable.pos.x -= 5 * player.facing;
+					var recoil = 5;
+					if(bullets[b].movable.vel.x < 0) recoil = -recoil;
+
+					player.movable.pos.x += recoil;
 					bullets[b].active = false;
 				}
 			}
@@ -210,7 +212,10 @@ function update() {
 							enemies[e].getCollisionRectangle()))
 						{
 							//temporary
-							enemies[e].movable.pos.x -= 5 * enemies[e].facing;
+							var recoil = -5;
+							if(bullets[b].movable.vel.x < 0) recoil = -recoil;
+
+							enemies[e].movable.pos.x += recoil;
 							enemies[e].active = false;
 							bullets[b].active = false;
 							break;

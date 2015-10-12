@@ -55,11 +55,17 @@ function Person(x, y, collisionRadius)
 	this.fireBullet = function() { 
 		var bulletAccel = this.gunDir.copy().normalize();
 		var bulletStart = bulletAccel.copy();
+		
 		bulletStart.setMag(this.disp.x + this.baseWidth 
 		* Math.min(this.gunDir.getMag() / (canvas.width / 3),1));
 		bulletStart.y -= this.disp.y / 2;
-		var b = new Bullet(this.faction,this.movable.pos.x + bulletStart.x
-		,this.movable.pos.y + bulletStart.y,bulletAccel.x,bulletAccel.y,5);
+		
+		var b = new Bullet(
+			this.faction,
+			this.movable.pos.x + bulletStart.x,
+			this.movable.pos.y + bulletStart.y,
+			bulletAccel.x,bulletAccel.y, 5);
+		
 		b.id = this.faction;
 		bullets.push(b);
 		
@@ -70,7 +76,10 @@ function Person(x, y, collisionRadius)
 		//push back
 		//temporary, will be fixed with future system
 		//also doesn't reflect when bullets are fired backward oops
-		this.movable.pos.x -= 5 * this.facing;
+		var recoil = -5;
+		if(this.gunDir.x < 0) recoil = -recoil;
+		
+		this.movable.pos.x += recoil;
 	}
 	
 	this.update = function(dt)
