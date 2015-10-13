@@ -181,7 +181,7 @@ function Person(x, y)
 		ctx.arc(x,y - this.disp.coords.y / 2,2,0,2*Math.PI,false);
 		ctx.fill();
 		ctx.beginPath();
-		ctx.arc(x + this.disp.coords.x * this.facing,y - this.disp.coords.y / 2,2,0,2*Math.PI,false);
+		ctx.arc(x + this.disp.coords.x * this.facing,y - this.disp.coords.y / 2,4,0,2*Math.PI,false);
 		ctx.fill();
 		
 		ctx.strokeStyle = 'yellow';
