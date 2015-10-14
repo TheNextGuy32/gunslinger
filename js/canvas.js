@@ -116,35 +116,9 @@ function input()
 			player.facing = FACING.LEFT;
 			player.movement = MOVEMENT.WALKING;
 		}
-
-	
-		/*if ( keys [32] ) {    //Space
-			//console.log('Space');
-			// Bullet
-			if(player.canShoot){
-				var b = new Bullet(0,player.movable.px,player.movable.py-35,30);
-				b.facing = player.facing;
-				bullets.push(b);
-				player.canShoot = false;
-			}
-
-		}*/
 		if ( keys [16] ) {    //Shift
 			//console.log('Shift');
 			//  Run
-		}
-		if ( keys [80] ) {    //p
-			if(gamePaused){
-				gamePaused = false;
-				resumeGame();
-				//console.log('Resume');
-			}
-			else{
-			//console.log('Pause');
-			gamePaused = true;
-			pauseGame();
-			draw
-			}
 		}
 	}
 
@@ -152,6 +126,8 @@ function input()
 }
 
 var choochoo = new Train(-70, 10, 1250, 500);
+var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
+var aestheticRightCar = new Train(1200, 10, 1250, 500);
 var player = new Person(10,10,50); //Does changing the y value actually do anything?
 var cover = new Array();
 var enemies = new Array();
@@ -252,7 +228,7 @@ function update() {
 
 	input();
 	player.update(dt);
-	player.movable.pos.x = Math.max(-15, Math.min(935, player.movable.pos.x));
+	player.movable.pos.x = Math.max(-15, Math.min(1125, player.movable.pos.x));
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		if(bullets[i].active) bullets[i].update(dt);
@@ -281,6 +257,8 @@ function draw() {
 	camY = player.movable.pos.y-200;
 	
 	choochoo.render(ctx, camX, camY);
+	aestheticLeftCar.render(ctx, camX, camY);
+	aestheticRightCar.render(ctx, camX, camY);
 	
 	player.render(ctx,camX,camY);
 	

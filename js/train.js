@@ -24,6 +24,12 @@ function Train(x, y, width, height)
 		trainWheelGradient.addColorStop(0, "#333333");
 		trainWheelGradient.addColorStop(1, "#000000");
 		
+		//Car connectors
+		ctx.fillStyle = "#333";
+		ctx.fillRect(sx, sy, -10, -10);
+		ctx.fillRect(sx+width, sy, 10, -10);
+		ctx.restore();
+		
 		//Train bg
 		ctx.fillStyle = trainBackgroundGradient;
 		ctx.fillRect(sx, sy, width, -1*height);
