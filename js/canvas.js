@@ -11,6 +11,18 @@ addEventListener("keydown", function (e)
 	{
 		 // The key is newly down!
     	keys[e.keyCode] = true;
+		
+		if(e.keyCode == 27)
+		{
+			if(gamePaused)
+			{
+				resumeGame();
+			}
+			else
+			{
+				pauseGame();
+			}
+		}
 	}
 }, false);
 
