@@ -182,8 +182,9 @@ function Person(x, y, collisionRadius)
 		ctx.rotate(recoilDir * ((this.canShoot) ? 0 : -Math.PI / 4));
 		
 		ctx.fillStyle = 'black';
-		var bw = 40, bh = 20;
+		var bw = 40, bh = 10;
 		ctx.fillRect(-bw/2,-bh/2,bw,bh);
+		ctx.fillRect(-bw/2, -bh/2, bw/4, this.facing == FACING.RIGHT ? bh*2 : -1*bh);
 		
 		ctx.restore();
 	}
