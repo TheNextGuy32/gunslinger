@@ -228,7 +228,15 @@ function update() {
 
 	input();
 	player.update(dt);
-	player.movable.pos.x = Math.max(-15, Math.min(1125, player.movable.pos.x));
+//	player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
+	if(player.movable.pos.x <= -128)
+	{
+		player.movable.pos.x += 1270;
+	}
+	else if(player.movable.pos.x >= 1238)
+	{
+		player.movable.pos.x -= 1270;
+	}
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		if(bullets[i].active) bullets[i].update(dt);
