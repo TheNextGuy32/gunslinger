@@ -2,133 +2,10 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
-//  Keyboard input
-var keys = {};
-var oldKeys = {};
-addEventListener("keydown", function (e) 
-{
-	if(!keys.hasOwnProperty(e.keyCode))
-	{
-		 // The key is newly down!
-    	keys[e.keyCode] = true;
-		
-		if(e.keyCode == 27)
-		{
-			if(gamePaused)
-			{
-				resumeGame();
-			}
-			else
-			{
-				pauseGame();
-			}
-		}
-	}
-}, false);
-
-addEventListener("keyup", function (e) 
-{
-	if(keys.hasOwnProperty(e.keyCode))
-	{
-		 // The key is newly released!
-    	delete keys[e.keyCode];
-	}
-
-}, false);
-
-addEventListener("mousedown",function(e) {
-	if(gamePaused) {
-		resumeGame();
-		return;
-	}
-	if(player.canShoot){
-		player.fireBullet();
-	}
-});
-
-addEventListener("mousemove",function(e) {
-	var mouse = new Vector(0, 0);
-	var delta = new Vector(0, 0);
-	mouse.x = e.pageX - e.target.offsetLeft;
-	mouse.y = e.pageY - e.target.offsetTop;
-	delta.x = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
-	//delta.x = player.facing*Math.abs(delta.x);
-	delta.y = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
-	//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
-	player.gunDir = delta;
-});
-
-function input()
-{
-	//Debug level-reset key: K
-	if(keys[75])
-	{
-		resetLevel();
-	}
-
-	if ( keys [87] && !oldKeys[87] ) {    //W
-
-		for (var c =0 ; c < cover.length; c++) {
-			if(doRectanglesOverlap(
-				player.getCollisionRectangle(),
-				cover[c].getPlayerCollisionRectangle()))
-			{
-				console.log("Was " + cover[c].tableStatus);
-				console.log(player.getCollisionRectangle());
-				console.log(cover[c].getPlayerCollisionRectangle());
-				
-				if(player.movable.pos.x <= cover[c].xPos)
-				{
-					cover[c].alterTableStatus(1);
-				}
-				else
-				{
-					cover[c].alterTableStatus(-1);
-				}
-				console.log("Now " + cover[c].tableStatus);
-				console.log("- - -");
-				break;
-			}
-
-		};
-	}
-
-	if ( keys [83] ) {    //S
-		//console.log('S');
-		//Slide
-		player.movement = MOVEMENT.CROUCHING;
-	}
-	else {
-
-		if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
-		{
-			//  Do nothing when pushing both diretions
-			player.movement = MOVEMENT.STANDING;
-		}
-		else if (keys[68] ) {   // D
-			//console.log('D');
-			player.facing = FACING.RIGHT;
-			player.movement = MOVEMENT.WALKING;
-		}
-
-		else if ( keys[65] ) {    //Aa
-			//console.log('A');
-			player.facing = FACING.LEFT;
-			player.movement = MOVEMENT.WALKING;
-		}
-		if ( keys [16] ) {    //Shift
-			//console.log('Shift');
-			//  Run
-		}
-	}
-
-
-}
-
 var choochoo = new Train(-70, 10, 1250, 500);
 var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
 var aestheticRightCar = new Train(1200, 10, 1250, 500);
-var player = new Person(10,10,50); //Does changing the y value actually do anything?
+var player = new Person(10,-75 + 10); //Does changing the y value actually do anything?
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
@@ -139,17 +16,10 @@ var game = setTimeout(update,1000/30);
 var camX = 0;
 var camY = 0;
 var now,fps, dt;
+
 function init() {
 	animFrame( recursiveAnim );
 	resetLevel();
-}
-
-function doRectanglesOverlap(r1, r2)
-{
-	return !(r2.x > r1.x + r1.w || 
-           r2.x+r2.w < r1.x || 
-           r2.y > r1.y + r1.h ||
-           r2.y + r2.h < r1.y);
 }
 
 function update() {
@@ -178,9 +48,7 @@ function update() {
 			if(bullets[b].id == FACTION.ENEMY){
 				
 				//  Enemy killing player
-				if(doRectanglesOverlap(
-					bullets[b].getCollisionRectangle(),
-					player.getCollisionRectangle()))
+				if(player.collider.intersects(bullets[b].collider))
 				{
 					var recoil = 5;
 					if(bullets[b].movable.vel.x < 0) recoil = -recoil;
@@ -196,9 +64,7 @@ function update() {
 				{
 					if(enemies[e].active)
 					{
-						if(doRectanglesOverlap(
-							bullets[b].getCollisionRectangle(),
-							enemies[e].getCollisionRectangle()))
+						if(enemies[e].collider.intersects(bullets[b].collider))
 						{
 							//temporary
 							var recoil = -5;
@@ -216,9 +82,7 @@ function update() {
 			//  Colliding with cover
 			for (var c =0 ; c < cover.length; c++) 
 			{	
-				if(doRectanglesOverlap(
-					bullets[b].getCollisionRectangle(),
-					cover[c].getBulletCollisionRectangle()))
+				if(cover[c].collider.intersects(bullets[b].collider))
 				{
 					bullets[b].active = false;
 				}
@@ -239,11 +103,13 @@ function update() {
 	}
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
-		if(bullets[i].active) bullets[i].update(dt);
-	};
+		if(bullets[i].active) 
+			bullets[i].update(dt);
+	};//is there a reason we work backwards here, but not for the other one?
 
 	for(var e = 0 ; e < enemies.length; e++){
-		if(enemies[e].active) enemies[e].update(dt);
+		if(enemies[e].active) 
+			enemies[e].update(dt);
 	}
 
 	oldKeys = $.extend( {}, keys );
@@ -323,16 +189,17 @@ function resetLevel()
 	{
 		bullets[b].active = false;
 	}
-	player.movable.pos = new Vector(10, 10);
+	player.movable.pos = new Vector(10, -75 + 10);
 	cover = new Array();
 	enemies = new Array();
 	
 	//Fill arrays - should be changed to be more level-specific in the future
-	cover.push(new Cover(800,10,80,60,20,10));
-	cover.push(new Cover(400,10,80,60,20,10));
-	cover.push(new Cover(100,10,80,60,20,10));
-	enemies.push(new Enemy(400,10,50));
-	enemies.push(new Enemy(450,10,50));
+	var coverWidth = 80, coverHeight = 60;
+	cover.push(new Cover(800,-coverHeight / 2 + 10,coverWidth,coverHeight,20,10));
+	cover.push(new Cover(400,-coverHeight / 2 + 10,coverWidth,coverHeight,20,10));
+	cover.push(new Cover(100,-coverHeight / 2 + 10,coverWidth,coverHeight,20,10));
+	enemies.push(new Enemy(400,-75 + 10));
+	enemies.push(new Enemy(450,-75 + 10));
 }
 window.onblur = function(){
 	console.log("blur at" + Date());
