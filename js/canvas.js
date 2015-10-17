@@ -2,7 +2,7 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
-var player = new Person(10,10);
+var player = new Person(10,20);
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
@@ -214,16 +214,16 @@ function resetLevel()
 	{
 		bullets[b].active = false;
 	}
-	player.movable.pos = new Vector(10, 10);
+	player.movable.pos = new Vector(10, -25);
 	cover = new Array();
 	enemies = new Array();
 	
 	//Fill arrays - should be changed to be more level-specific in the future
-	cover.push(new Cover(400,10,40,30,10,5));
-	cover.push(new Cover(250,10,40,30,10,5));
-	cover.push(new Cover(100,10,40,30,10,5));
-	enemies.push(new Enemy(400,10));
-	enemies.push(new Enemy(450,10));
+	cover.push(new Cover(400,-5,40,30,10,5));
+	cover.push(new Cover(250,-5,40,30,10,5));
+	cover.push(new Cover(100,-5,40,30,10,5));
+	enemies.push(new Enemy(400,-25));
+	enemies.push(new Enemy(450,-25));
 }
 window.onblur = function(){
 	console.log("blur at" + Date());

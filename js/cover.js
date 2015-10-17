@@ -1,11 +1,11 @@
 "use strict";
 
-var TABLE_STATE =  
+/*var TABLE_STATE =  
 Object.seal({
 	LEFT:-Math.PI / 2,
 	UP:0,
 	RIGHT:Math.PI / 2
-});
+});*/
 
 function Cover (xPos, yPos, width, height, thickness,legWidth) {
 //properties
@@ -21,26 +21,27 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
 	this.legWidth = legWidth
 
 	this.movable = new Movable(xPos,yPos,10);
+	this.rotation = 0;
 	this.collider = new BoundingBox(new Vector(xPos,yPos),new Vector(width,height));
 	
 	this.animation = new Animation(xPos,yPos,10);
 
-	this.tableState = TABLE_STATE.UP;//for now, I have removed proper table collisions
-	//it will be fixed when SAT is implemented
-
+	this.updateCollider = function() {
+		this.collider.update(this.movable.pos,this.collider.dims,this.rotation);
+	}
+	
 	//functions
 	this.alterTableState = function(direction){
 		//handles tipping cover into tipped state
-		if(this.tableState != TABLE_STATE.UP)
+		if(this.rotation != 0)
 		{
-			this.tableState = TABLE_STATE.UP;
+			this.rotation = 0;
 		}
 		else
 		{
-			this.tableState = direction;
+			this.rotation = direction;
 		}
-		this.collider.update(this.movable.pos.sub(new Vector(this.collider.dims.x / 2,this.collider.dims.y))
-		,this.collider.dims,this.tableState);
+		this.updateCollider();
 	};
 	
 	//draws cover
@@ -53,26 +54,18 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
         
         ctx.fillStyle = "brown";
 
-		//this needs to be fixed BAD
-        if(this.tableState == TABLE_STATE.UP){
-	        ctx.fillRect(sx-(this.w/2),sy-this.h,this.legWidth,this.h);
-	        ctx.fillRect(sx+(this.w/2)-this.legWidth,sy-this.h,this.legWidth,this.h);
-	        ctx.fillRect(sx-(this.w/2),sy-this.h,this.w,this.thickness);
-        }
-        else if(this.tableState == TABLE_STATE.LEFT)
-        {
-        	ctx.fillRect(sx-(this.w/2)-this.h,sy-this.w,this.h,this.legWidth);
-        	ctx.fillRect(sx-(this.w/2)-this.h,sy-this.w,this.thickness,this.w);
-        	ctx.fillRect(sx-(this.w/2)-this.h,sy-this.legWidth,this.h,this.legWidth);
-        }
-        else
-        {	
-			ctx.fillRect(sx+(this.w/2),sy-this.w,this.h,this.legWidth);
-        	ctx.fillRect(sx+(this.w/2)+this.h - this.thickness,sy-this.w,this.thickness,this.w);
-        	ctx.fillRect(sx+(this.w/2),sy-this.legWidth,this.h,this.legWidth);
-        }
+		ctx.translate(sx,sy);
+		ctx.rotate(this.rotation);
+		//legs
+	    ctx.fillRect(-this.collider.dims.x / 2, -this.collider.dims.y / 2, this.legWidth, this.collider.dims.y);
+	    ctx.fillRect( this.collider.dims.x / 2 - this.legWidth, -this.collider.dims.y / 2, this.legWidth, this.collider.dims.y);
+		//table
+	    ctx.fillRect(-this.collider.dims.x / 2, -this.collider.dims.y / 2, this.collider.dims.x, this.thickness);
 
         ctx.restore();
+		
+		this.collider.debug(ctx,cx,cy);
     };
 	
+	this.updateCollider();
 }

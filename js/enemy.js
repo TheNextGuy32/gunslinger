@@ -70,7 +70,7 @@ function Enemy(x,y) {
 		}
 		this.movable.vel.x = this.velocity;
 		this.movable.update(dt);
-		this.collider.update(this.movable.pos.sub(this.disp.coords));
+		this.collider.update(this.movable.pos);
 		
 		//  Animation updating
 		this.animation.worldX = this.movable.pos.x;

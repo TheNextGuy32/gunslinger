@@ -1,6 +1,5 @@
 function BoundingBox(coords,dims) {
-	this.coords = coords;//these are both vectors, top left is x and y, naively, so be careful
-	this.center = null;
+	this.coords = coords;//these are both vectors, center is x and y
 	this.toCorner = null;
 	this.dims = dims;//width and height
 	this.corners = new Array(4);
@@ -13,7 +12,8 @@ function BoundingBox(coords,dims) {
 		//you can't do pos,rot, it will be recognized as pos,dims
 		//so just call as pos,undefined,rot or pos,this.collider.dims,rot
 		dims = dims || this.dims;
-		rot = rot || this.rotation;
+		if(rot != 0)
+			rot = rot || this.rotation;
 		this.coords = pos;
 		this.dims = dims;
 		this.rotation = rot;
@@ -25,15 +25,14 @@ function BoundingBox(coords,dims) {
 		this.toCorner = this.dims.mult(0.5).rotate(this.rotation);
 		var toOppositeCorner = new Vector(this.toCorner.x, -this.toCorner.y);
 		
-		this.center = this.coords.add(this.toCorner);
 		//top left
-		this.corners[0] = this.center.sub(this.toCorner);
+		this.corners[0] = this.coords.sub(this.toCorner);
 		//top right
-		this.corners[1] = this.center.add(toOppositeCorner);
+		this.corners[1] = this.coords.add(toOppositeCorner);
 		//bottom right
-		this.corners[2] = this.center.add(this.toCorner);
+		this.corners[2] = this.coords.add(this.toCorner);
 		//bottom left
-		this.corners[3] = this.center.sub(toOppositeCorner);
+		this.corners[3] = this.coords.sub(toOppositeCorner);
 	};
 	
 	this.updateNormals = function() {
@@ -58,7 +57,7 @@ function BoundingBox(coords,dims) {
 	
 	this.intersects = function(other) { 
 		//quick circle collision optimization
-		if (this.center.sub(other.center).getMag() 
+		if (this.coords.sub(other.coords).getMag() 
 			> Math.max(this.dims.x, this.dims.y) + Math.max(other.dims.x, other.dims.y))
 			return false;
 		//separating axis theorem
@@ -73,8 +72,9 @@ function BoundingBox(coords,dims) {
 	}
 	
 	this.pointInside = function(x,y) {
-		return !(x < this.coords.x || x > this.coords.x + this.dims.x 
-		|| y < this.coords.y || y > this.coords.y + this.dims.y);
+		//doesn't account for rotation
+		return !(x < this.coords.x - this.dims.x / 2 || x > this.coords.x + this.dims.x / 2
+		|| y < this.coords.y - this.dims.y / 2 || y > this.coords.y + this.dims.y / 2);
 	};
 	
 	this.basicIntersect = function(other) {
@@ -83,11 +83,12 @@ function BoundingBox(coords,dims) {
 		console.log("Other dims: " + other.dims);
 		console.log("This coords: " + this.coords);
 		console.log("This dims: " + this.dims);
-		*/
-		return !(other.coords.x > this.coords.x + this.dims.x || 
-           other.coords.x + other.dims.x < this.coords.x || 
-           other.coords.y > this.coords.y + this.dims.y ||
-           other.coords.y + other.dims.y < this.coords.y);
+	*/
+	//doesn't account for rotation
+		return !(other.coords.x > this.coords.x + this.dims.x / 2 || 
+           other.coords.x + other.dims.x / 2 < this.coords.x || 
+           other.coords.y > this.coords.y + this.dims.y / 2 ||
+           other.coords.y + other.dims.y / 2 < this.coords.y);
 	}
 	
 	this.getArea = function() {
@@ -98,6 +99,18 @@ function BoundingBox(coords,dims) {
 	{
 		return new BoundingBox(this.coords, this.dims);
 	};
+	
+	this.debug = function(ctx,cx,cy) {
+		ctx.save();
+		ctx.strokeStyle = 'yellow';
+		ctx.lineWidth = 3;
+		var sx = worldToScreen(this.coords.x,cx,ctx.canvas.width);
+		var sy = worldToScreen(this.coords.y,cy,ctx.canvas.height);
+		ctx.translate(sx,sy);
+		ctx.rotate(this.rotation);
+		ctx.strokeRect(-this.dims.x / 2,-this.dims.y / 2,this.dims.x,this.dims.y);
+		ctx.restore();
+	}
 	
 	//just so everything is set properly
 	this.updateCorners();

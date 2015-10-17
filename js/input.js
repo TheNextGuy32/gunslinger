@@ -39,7 +39,7 @@ addEventListener("mousemove",function(e) {
 	mouse.y = e.pageY - e.target.offsetTop;
 	delta.x = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
 	//delta.x = player.facing*Math.abs(delta.x);
-	delta.y = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
+	delta.y = mouse.y - worldToScreen(player.movable.pos.y,camY,ctx.canvas.height);
 	//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
 	player.gunDir = delta;
 });
@@ -63,11 +63,11 @@ function input()
 				
 				if(player.movable.pos.x <= cover[c].xPos)
 				{
-					cover[c].alterTableState(TABLE_STATE.LEFT);
+					cover[c].alterTableState(Math.PI / 2);
 				}
 				else
 				{
-					cover[c].alterTableState(TABLE_STATE.RIGHT);
+					cover[c].alterTableState(-Math.PI / 2);
 				}
 				console.log("Now " + cover[c].tableState);
 				console.log("- - -");
