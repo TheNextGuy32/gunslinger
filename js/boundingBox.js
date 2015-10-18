@@ -44,18 +44,66 @@ function BoundingBox(coords,dims) {
 	}
 	
 	this.getMaxMin = function(axis) {
-		var maxmin = [ this.corners[0].dot(axis), 1 ];
+		var maxmin = { max : this.corners[0].dot(axis), min: 1 ];
 		for (var i = 1; i < this.corners.length; i++) {
 			var proj = this.corners[i].dot(axis);
-			if (maxmin[1] > proj)
-				maxmin[1] = proj;
-			if (proj > maxmin[0])
-				maxmin[0] = proj;
+			if (proj < maxmin.min)
+				maxmin.min = proj;
+			if (proj > maxmin.max)
+				maxmin.max = proj;
 		}
 		return maxmin;
 	}
 	
-	this.intersects = function(other) { 
+	this.getSupportPoint = function(dir) {
+		var support = { point : this.corners[0], proj: this.corners[0].dot(dir) };
+		for (var i = 1; i < this.corners.length; i++) {
+			var proj = this.corners[i].dot(dir);
+			if (proj > support.proj) {
+				support.point = this.corners[i];
+				support.proj = proj;
+			}
+		}
+		return support;
+	}	
+	
+	//returns the normal and vertex with the greatest penetration,
+	//this can be the minimum axis of penetration (confusingly enough)
+	this.getAxisMinPen = function(other) {
+		var axis = { index: -1, maxPen: Number.NEGATIVE_INFINITY };
+		for(var i = 0; i < this.normals.length; i++) {
+			var norm = this.normals[i];
+			var support = other.getSupportPoint(norm.mult(-1));
+			var vert = this.corners[i];
+			
+			var pen = norm.dot(support.point.sub(vert));
+			if(pen > axis.maxPen) {
+				axis.index = i;
+				axis.maxPen = pen;
+			}
+		}
+		return axis;
+	}
+	
+	this.intersects = function(other) {
+		//quick circle collision optimization
+		if (this.coords.sub(other.coords).getMag() 
+			> Math.max(this.dims.x, this.dims.y) + Math.max(other.dims.x, other.dims.y))
+			return false;
+		
+		//separating axis theorem NEW IMPLEMENTATION
+		var minAxis = this.getAxisMinPen(other); 
+		if(minAxis.maxPen > 0)
+			return false;
+
+		var otherMinAxis = other.getAxisMinPen(this);
+		if (otherMinAxis.maxPen > 0)
+			return false;
+		
+		return true;
+	}
+	
+	this.intersectsMaxMin = function(other) { 
 		//quick circle collision optimization
 		if (this.coords.sub(other.coords).getMag() 
 			> Math.max(this.dims.x, this.dims.y) + Math.max(other.dims.x, other.dims.y))
@@ -65,7 +113,7 @@ function BoundingBox(coords,dims) {
 		for (var i = 0; i < axes.length; i++) {
 			var projs = this.getMaxMin(axes[i]); 
 			var otherProjs = other.getMaxMin(axes[i]);
-			if (projs[0] < otherProjs[1] || otherProjs[0] < projs[1])
+			if (projs.max < otherProjs.min || otherProjs.max < projs.min)
 				return false;
 		}
 		return true;

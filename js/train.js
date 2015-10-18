@@ -48,4 +48,42 @@ function Train(x, y, width, height)
 		
 		this.collider.debug(ctx, cx, cy);
     };
+	
+	this.constrain = function() {
+		for(var e in enemies) {
+			if(e.active && !this.collider.intersects(e.collider))
+				
+		}
+		for(var b in bullets) {
+			if(b.active && !this.collider.intersects(b.collider))
+				b.active = false;
+		}
+			
+			if(player.movable.pos.x <= (currentCarNum > minCarNum ? -128 : -15))
+	{
+		if(currentCarNum > minCarNum)
+		{
+			player.movable.pos.x += 1270;
+			currentCarNum --;
+			resetLevel();
+		}
+		else
+		{
+			player.movable.pos.x = -15;
+		}
+	}
+	else if(player.movable.pos.x >= (currentCarNum < maxCarNum ? 1238 : 1120))
+	{
+		if(currentCarNum < maxCarNum)
+		{
+			player.movable.pos.x -= 1270;
+			currentCarNum ++;
+			resetLevel();
+		}
+		else
+		{
+			player.movable.pos.x = 1120;
+		}
+	}
+	}
 }

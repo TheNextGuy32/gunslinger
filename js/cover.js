@@ -25,6 +25,7 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
 	this.collider = new BoundingBox(new Vector(xPos,yPos),new Vector(width,height));
 	
 	this.animation = new Animation(xPos,yPos,10);
+	this.active = true;
 
 	this.updateCollider = function() {
 		this.collider.update(this.movable.pos,this.collider.dims,this.rotation);
@@ -43,6 +44,11 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
 		}
 		this.updateCollider();
 	};
+	
+	this.update = function(dt) {
+		this.movable.update(dt);
+		this.updateCollider();
+	}
 	
 	//draws cover
 	this.render = function(ctx,cx,cy){

@@ -1,5 +1,5 @@
 
-var bulletSpeed = 12000;
+var bulletSpeed = 12 * 10000;
 
 var FACTION =  
 Object.seal({

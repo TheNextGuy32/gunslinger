@@ -89,7 +89,7 @@ function update() {
 							break;
 						}
 					}
-				};
+				}
 			}
 
 			//  Colliding with cover
@@ -99,13 +99,6 @@ function update() {
 				{
 					bullets[b].active = false;
 				}
-			};
-			
-			
-			if(!choochoo.collider.intersects(bullets[b].collider))
-			{
-				bullets[b].active = false;
-				continue;
 			}
 		}
 	};
@@ -120,34 +113,12 @@ function update() {
 			invincible = false;	
 		}
 	}
-//	player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
-	if(player.movable.pos.x <= (currentCarNum > minCarNum ? -128 : -15))
-	{
-		if(currentCarNum > minCarNum)
-		{
-			player.movable.pos.x += 1270;
-			currentCarNum --;
-			resetLevel();
-		}
-		else
-		{
-			player.movable.pos.x = -15;
-		}
-	}
-	else if(player.movable.pos.x >= (currentCarNum < maxCarNum ? 1238 : 1120))
-	{
-		if(currentCarNum < maxCarNum)
-		{
-			player.movable.pos.x -= 1270;
-			currentCarNum ++;
-			resetLevel();
-		}
-		else
-		{
-			player.movable.pos.x = 1120;
-		}
-	}
 
+	for(var c = 0 ; c < cover.length; c++){
+		if(cover[c].active) 
+			cover[c].update(dt);
+	}
+	
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		if(bullets[i].active) 
 			bullets[i].update(dt);
@@ -157,7 +128,9 @@ function update() {
 		if(enemies[e].active) 
 			enemies[e].update(dt);
 	}
-
+	
+	choochoo.constrain();
+	
 	oldKeys = $.extend( {}, keys );
 }
 
