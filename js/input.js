@@ -27,6 +27,10 @@ addEventListener("mousedown",function(e) {
 		resumeGame();
 		return;
 	}
+	if(gameStart == false || gameEnd == true) {
+		startGame();
+		return;
+	}
 	if(player.canShoot)
 	{
 		if(bulletsLeft > 0)

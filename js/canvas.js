@@ -15,6 +15,8 @@ var maxCarNum = 2;
 
 var lastTime = (+new Date);
 var gamePaused = false;
+var gameStart = false;
+var gameEnd = false;
 var game = setTimeout(update,1000/30);
 var camX = 0;
 var camY = 0;
@@ -33,8 +35,10 @@ function init() {
 }
 
 function update() {
-	if(gamePaused)
+	if(gamePaused == true || gameStart == false || gameEnd == true)
+	{
 		return;
+	}
 	
 	//Calculating dt
 	now = (+new Date); 
@@ -61,7 +65,8 @@ function update() {
 
 						if(hearts == 0)
 						{
-							//  Call lose function!
+							gameEnd = true;
+							hearts = 3;
 							
 						}
 
@@ -77,15 +82,6 @@ function update() {
 				{
 					if(enemies[e].active)
 					{
-						if(!enemies[e].aware)
-						{
-							var distance = Math.abs(enemies[e].movable.pos.x - bullets[b].movable.pos.x);
-							if(distance < 400)
-							{
-								enemies[e].aware = true;
-							}
-						}
-
 						if(enemies[e].collider.intersects(bullets[b].collider))
 						{
 							//temporary
@@ -240,17 +236,29 @@ function pauseGame() {
 		//pausedGame = true;
 		gamePaused = true;
 		cancelAnimationFrame(recursiveAnim);
-		update();
+		//update();
   } 
   
 function resumeGame(){
 		//cancelAnimationFrame(this.animationID);
 		gamePaused = false;
-		//update();
+		update();
 		recursiveAnim();
 		//this.sound.playBGAudio();
 	}
-	
+function startGame(){
+		gameEnd = false;
+		gameStart = true;
+		update();
+		recursiveAnim();
+		//console.log("start game");
+		resetLevel();
+	}
+function endScreen(){
+		gameEnd = true;
+		cancelAnimationFrame(recursiveAnim());
+		//update();
+	}
 function fillText(string, x, y, css, color) {
 		ctx.save();
 		ctx.font = css;
@@ -265,11 +273,32 @@ function drawPauseScreen(){
 		ctx.fillRect(0,0,canvas.width,canvas.height);
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
-		fillText("Click to Play",canvas.width/2,canvas.height/2,"40pt courier","white");
+		fillText("Click to Resume",canvas.width/2,canvas.height/2,"40pt courier","white");
 		ctx.restore();
-		
 	}
-	
+function drawStartScreen(){
+		ctx.save();
+		ctx.fillStyle = "black";
+		ctx.globalAlpha = 0.75;
+		ctx.fillRect(0,0,canvas.width,canvas.height);
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		fillText("Click Anywhere to Begin",canvas.width/2,canvas.height/2,"40pt courier","white");
+		fillText("You Can Read How to Play Below this Game Window",canvas.width/2,canvas.height/2 + 80,"20pt courier","white");
+		ctx.restore();
+}
+function drawEndScreen(){
+		ctx.save();
+		ctx.fillStyle = "black";
+		ctx.globalAlpha = 0.75;
+		ctx.fillRect(0,0,canvas.width,canvas.height);
+		ctx.textAlign = "center";
+		ctx.textBaseline = "middle";
+		fillText("Lost all Hearts",canvas.width/2,canvas.height/2,"40pt courier","red");
+		fillText ("You made it through " + currentCarNum +  " rooms",canvas.width/2, canvas.height/2 + 60, "30pt Courier","white");
+		fillText("Click Anywhere to Play Again",canvas.width/2,canvas.height/2 + 120,"20pt courier","white");
+		ctx.restore();
+}
 function resetLevel()
 {
 	//Reset bullets and player, create new arrays for cover & enemies
@@ -321,12 +350,19 @@ var animFrame =
 
 
 var recursiveAnim = function() {
-    update();
-	
+
+	if(gameEnd){
+		drawEndScreen(ctx);
+		return;
+	}
 	if(gamePaused){
 		drawPauseScreen(ctx);
 		return;
 	}
+	if(gameStart == false){
+		drawStartScreen(ctx);
+		return;
+	}update();
 	//ctx.globalAlpha = 1.0;
     draw();
     animFrame( recursiveAnim );
