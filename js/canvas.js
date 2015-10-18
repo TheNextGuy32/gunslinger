@@ -9,7 +9,7 @@ var player = new Person(10,-75 + 10);
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
-var currentCarNum = 1;
+var currentCarNum = 0;
 var minCarNum = 0;
 var maxCarNum = 10;
 
@@ -66,7 +66,8 @@ function update() {
 						if(hearts == 0)
 						{
 							gameEnd = true;
-
+							hearts = 3;
+							
 						}
 
 						player.movable.pos.x += recoil;
@@ -247,14 +248,11 @@ function resumeGame(){
 	}
 function startGame(){
 		gameEnd = false;
-		hearts = 3;
-		bulletsLeft = 6;
-		currentCarNum = 1;
 		gameStart = true;
 		update();
 		recursiveAnim();
 		//console.log("start game");
-		resetLevel();
+		resetGame();
 	}
 function endScreen(){
 		gameEnd = true;
@@ -347,6 +345,15 @@ function resetLevel()
 		enemies.push(temp);
 	}
 }
+function resetGame()
+{
+	player.movable.pos.x = 10;
+	currentCarNum = 0;
+	hearts = 3;
+	bulletsLeft = bulletsPerClip;
+	resetLevel();
+}
+
 window.onblur = function(){
 	console.log("blur at" + Date());
 	pauseGame();
