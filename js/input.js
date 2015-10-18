@@ -139,7 +139,7 @@ function input()
 		{
 			bulletsLeft = bulletsPerClip;
 			player.canShoot = false;
-			player.shootTimer = 0;
+			player.shootTimer = -0.6;
 		}
 	}
 }

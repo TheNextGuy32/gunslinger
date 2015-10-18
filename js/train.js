@@ -1,13 +1,6 @@
 function Train(x, y, width, height) 
 {
-	this.getCollisionRectangle = function()
-	{
-		return {
-	        	x: x,
-	        	y: y-height,
-	        	w: width,
-	        	h: height};
-	}
+	this.collider = new BoundingBox(new Vector(x+width/2, y-height/2), new Vector(width, height));
 
     this.render = function(ctx,cx,cy)
     {
@@ -52,5 +45,7 @@ function Train(x, y, width, height)
 		ctx.fillStyle = "#ffffff";
 		ctx.fillRect(0, sy+wheelRadius*1.9, ctx.canvas.width, 5);
 		ctx.restore();
+		
+		this.collider.debug(ctx, cx, cy);
     };
 }

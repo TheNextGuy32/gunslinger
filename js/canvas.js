@@ -45,17 +45,6 @@ function update() {
 	for (var b = 0; b < bullets.length ; b++)
 	{
 		if(bullets[b].active){
-			//  If its going off the map
-			if(	bullets[b].movable.pos.x < -30	|| 
-				bullets[b].movable.pos.x > 1135 	||
-				bullets[b].movable.pos.y < -1*choochoo.height	||
-				bullets[b].movable.pos.y > choochoo.height * 2) 
-			{
-				bullets[b].active = false;
-				continue;
-			}
-			
-
 			if(bullets[b].id == FACTION.ENEMY){
 				
 				if(!invincible)
@@ -111,6 +100,13 @@ function update() {
 					bullets[b].active = false;
 				}
 			};
+			
+			
+			if(!choochoo.collider.intersects(bullets[b].collider))
+			{
+				bullets[b].active = false;
+				continue;
+			}
 		}
 	};
 
