@@ -314,7 +314,21 @@ function resetLevel()
 	var coverWidth = 80, coverHeight = 60;
 	for(var i = Math.random()*4+1; i > 0; i --)
 	{
-		cover.push(new Cover(Math.random()*900+100,-coverHeight/2+10,coverWidth,coverHeight,20,10));
+		var xPos, posIsAcceptable;
+		do
+		{
+			posIsAcceptable = true;
+			xPos = Math.random()*900+100;
+			console.log(xPos);
+			for(var c = 0; c < cover.length; c++)
+			{
+				if(Math.abs(cover[c].xPos-xPos) < coverWidth+5)
+				{
+					posIsAcceptable = false;
+				}
+			}
+		}while(!posIsAcceptable);
+		cover.push(new Cover(xPos,-coverHeight/2+10,coverWidth,coverHeight,20,10));
 	}
 	for(var i = Math.random()*3; i > 0; i--)
 	{
