@@ -34,7 +34,7 @@ function Person(x, y)
 	
 
 	this.canShoot = true;
-	this.shootCooldown = 0.5;
+	this.shootCooldown = 0.7;
 	this.shootTimer = 0;
 	this.firing = false;
 	this.gunDir = new Vector(0, 0);
@@ -42,6 +42,7 @@ function Person(x, y)
 	this.fillStyle = "lightgrey";
 
 	this.updateShoot = function(dt) {
+		
 		if(!this.canShoot){
 			this.shootTimer += dt;
 			if(this.shootTimer > this.shootCooldown)
@@ -54,15 +55,18 @@ function Person(x, y)
 	}
 	
 	this.fireBullet = function() { 
+				
 		var bulletAccel = this.gunDir.copy().normalize();
 		var bulletStart = bulletAccel.copy();
+		bulletStart.setMag(
+			this.disp.coords.x + this.baseWidth * Math.min(this.gunDir.getMag() / (canvas.width / 3),1));
 		
-		bulletStart.setMag(this.disp.coords.x + this.baseWidth 
-		* Math.min(this.gunDir.getMag() / (canvas.width / 3),1));
-		var b = new Bullet(this.faction
-		,this.movable.pos.x + bulletStart.x
-		,this.movable.pos.y + bulletStart.y,
-		bulletAccel.x,bulletAccel.y);
+		var b = new Bullet(this.faction,
+			this.movable.pos.x + bulletStart.x,
+			this.movable.pos.y + bulletStart.y,
+			bulletAccel.x,
+			bulletAccel.y);
+		
 		bullets.push(b);
 		
 		this.bullets--;
@@ -85,7 +89,7 @@ function Person(x, y)
 		this.disp.coords.y = 0;
 		switch(this.movement) {
 		case MOVEMENT.CROUCHING:
-			this.disp.dims.y = this.baseHeight / 2;
+			this.disp.dims.y = (this.baseHeight / 2);
 			this.disp.coords.y = 0;
 			break;
 		default:
@@ -159,16 +163,23 @@ function Person(x, y)
 		
 		ctx.save();
 		
-		ctx.translate(x,y);
+		
+		 ctx.translate(x,y);
+		 
+		 
+
 		var rot = Math.atan(this.gunDir.y / this.gunDir.x);
 		rot += (this.gunDir.x >= 0) ? 0 : Math.PI;
+		
 		//this is for recoil
 		var recoilDir = Math.sign(Math.PI - (rot + Math.PI / 2));
 		rot -= recoilDir * ((this.canShoot) ? 0 : Math.PI / 12);
 		ctx.rotate(rot);
+		
 		var gunx = this.disp.coords.x;
 		gunx += this.baseWidth * Math.min(this.gunDir.getMag() / (canvas.width / 3),1);
 		gunx -= ((this.canShoot) ? 0 : this.disp.coords.x / 2);
+		
 		ctx.translate(gunx,0);
 		ctx.rotate(recoilDir * ((this.canShoot) ? 0 : -Math.PI / 4));
 		

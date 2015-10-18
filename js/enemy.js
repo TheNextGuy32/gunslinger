@@ -14,6 +14,11 @@ function Enemy(x,y) {
 	this.aware = false;
 	this.awarenessDistance = 500;
 	
+	this.hearts = 2;
+	this.hitstunDuration = 0.5;
+	this.hitstunTimer = 0;
+	this.stunned = false;
+
 	this.fireAt = function(target) {
 		
 		if(!this.canShoot)
@@ -42,7 +47,7 @@ function Enemy(x,y) {
 		
 			this.updateShoot(dt);
 			//if the player is firing on you, always fire back rn
-			if(player.firing) {
+			if(player.firing && !this.stunned) {
 			 	this.fireAt(this.target);
 			}
 			
@@ -71,13 +76,15 @@ function Enemy(x,y) {
 			//fire if the player isn't already firing at you and you've closed the distance
 			
 			else if (!player.firing) {
-				this.fireAt(this.target);//atm the target doesn't do anything, as enemies just fire linearly.
-				//in the future this will allow the enemy to fire at you while ducking
-				this.movement = MOVEMENT.STANDING;
-				this.velocity = 0;
-				this.facing = Math.sign(dist);
-				//this happens when they are completely on top of each other
-				if(!this.facing) this.facing = FACING.LEFT;
+				if(!this.stunned) {
+					this.fireAt(this.target);//atm the target doesn't do anything, as enemies just fire linearly.
+					//in the future this will allow the enemy to fire at you while ducking
+					this.movement = MOVEMENT.STANDING;
+					this.velocity = 0;
+					this.facing = Math.sign(dist);
+					//this happens when they are completely on top of each other
+					if(!this.facing) this.facing = FACING.LEFT;
+				}
 			}
 		}
 		else
@@ -88,6 +95,16 @@ function Enemy(x,y) {
 			}
 		}
 		
+		if(this.stunned)
+		{
+			this.hitstunTimer+= dt;
+			if(this.hitstunTimer > this.hitstunDuration)
+			{
+				this.hitstunTimer = 0;
+				this.stunned = false;
+			}			
+		}
+
 		this.movable.vel.x = this.velocity;
 		this.movable.update(dt);
 		this.collider.update(this.movable.pos);

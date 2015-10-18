@@ -42,13 +42,14 @@ addEventListener("mousedown",function(e) {
 });
 
 addEventListener("mousemove",function(e) {
-	var mouse = new Vector(0, 0);
+	var mouse = new Vector(e.pageX - e.target.offsetLeft, e.pageY - e.target.offsetTop);
 	var delta = new Vector(0, 0);
-	mouse.x = e.pageX - e.target.offsetLeft;
-	mouse.y = e.pageY - e.target.offsetTop;
+
 	delta.x = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
 	//delta.x = player.facing*Math.abs(delta.x);
+	
 	delta.y = mouse.y - worldToScreen(player.movable.pos.y,camY,ctx.canvas.height);
+	
 	//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
 	player.gunDir = delta;
 });
@@ -139,11 +140,12 @@ function input()
 			}
 		}
 		
-		if( keys [82] )		//R
+		
+	}
+	if( keys [82] )		//R
 		{
 			bulletsLeft = bulletsPerClip;
 			player.canShoot = false;
 			player.shootTimer = -0.6;
 		}
-	}
 }

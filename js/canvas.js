@@ -48,7 +48,8 @@ function update() {
 	
 	for (var b = 0; b < bullets.length ; b++)
 	{
-		if(bullets[b].active){
+		if(bullets[b].active)
+		{
 			if(bullets[b].id == FACTION.ENEMY){
 				
 				if(!invincible)
@@ -82,6 +83,11 @@ function update() {
 				{
 					if(enemies[e].active)
 					{
+						var distance = Math.abs(enemies[e].movable.pos.x - bullets[b].movable.pos.x);
+						if(distance < 300)
+						{
+							enemies[e].aware = true;
+						}
 						if(enemies[e].collider.intersects(bullets[b].collider))
 						{
 							//temporary
@@ -89,7 +95,12 @@ function update() {
 							if(bullets[b].movable.vel.x < 0) recoil = -recoil;
 
 							enemies[e].movable.pos.x += recoil;
-							enemies[e].active = false;
+							enemies[e].hearts--;
+							enemies[e].stunned = true;
+							if(enemies[e].hearts <= 0 )
+							{
+								enemies[e].active = false;
+							}
 							bullets[b].active = false;
 							break;
 						}
@@ -301,6 +312,7 @@ function drawEndScreen(){
 }
 function resetLevel()
 {
+	bulletsLeft = 6;
 	//Reset bullets and player, create new arrays for cover & enemies
 	for (var b = 0; b < bullets.length ; b++)
 	{
@@ -311,7 +323,7 @@ function resetLevel()
 	
 	//Fill arrays - should be changed to be more level-specific in the future
 
-	var coverWidth = 80, coverHeight = 60;
+	var coverWidth = 90, coverHeight = 60;
 	for(var i = Math.random()*4+1; i > 0; i --)
 	{
 		cover.push(new Cover(Math.random()*900+100,-coverHeight/2+10,coverWidth,coverHeight,20,10));
