@@ -21,6 +21,7 @@ var camY = 0;
 var now,fps, dt;
 
 var bulletsLeft = 6;
+var bulletsPerClip = 6;
 var hearts = 3;
 var invincibilityDuration = 1;
 var invincibilityTimer = 0;
