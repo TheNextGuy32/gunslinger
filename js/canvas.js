@@ -5,10 +5,13 @@ var ctx = canvas.getContext('2d');
 var choochoo = new Train(-70, 10, 1250, 500);
 var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
 var aestheticRightCar = new Train(1200, 10, 1250, 500);
-var player = new Person(10,-75 + 10); //Does changing the y value actually do anything?
+var player = new Person(10,-75 + 10);
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
+var currentCarNum = 1;
+var minCarNum = 0;
+var maxCarNum = 2;
 
 var lastTime = (+new Date);
 var gamePaused = false;
@@ -93,13 +96,31 @@ function update() {
 	input();
 	player.update(dt);
 //	player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
-	if(player.movable.pos.x <= -128)
+	if(player.movable.pos.x <= (currentCarNum > minCarNum ? -128 : -15))
 	{
-		player.movable.pos.x += 1270;
+		if(currentCarNum > minCarNum)
+		{
+			player.movable.pos.x += 1270;
+			currentCarNum --;
+			resetLevel();
+		}
+		else
+		{
+			player.movable.pos.x = -15;
+		}
 	}
-	else if(player.movable.pos.x >= 1238)
+	else if(player.movable.pos.x >= (currentCarNum < maxCarNum ? 1238 : 1120))
 	{
-		player.movable.pos.x -= 1270;
+		if(currentCarNum < maxCarNum)
+		{
+			player.movable.pos.x -= 1270;
+			currentCarNum ++;
+			resetLevel();
+		}
+		else
+		{
+			player.movable.pos.x = 1120;
+		}
 	}
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
@@ -131,8 +152,14 @@ function draw() {
 	camY = player.movable.pos.y-200;
 	
 	choochoo.render(ctx, camX, camY);
-	aestheticLeftCar.render(ctx, camX, camY);
-	aestheticRightCar.render(ctx, camX, camY);
+	if(currentCarNum > minCarNum)
+	{
+		aestheticLeftCar.render(ctx, camX, camY);
+	}
+	if(currentCarNum < maxCarNum)
+	{
+		aestheticRightCar.render(ctx, camX, camY);
+	}
 	
 	player.render(ctx,camX,camY);
 	
@@ -189,18 +216,30 @@ function resetLevel()
 	{
 		bullets[b].active = false;
 	}
-	player.movable.pos = new Vector(10, -75 + 10);
 	cover = new Array();
 	enemies = new Array();
 	
 	//Fill arrays - should be changed to be more level-specific in the future
 
 	var coverWidth = 80, coverHeight = 60;
-	cover.push(new Cover(800,-coverHeight / 2 + 10,coverWidth,coverHeight,20,10));
-	cover.push(new Cover(400,-coverHeight / 2 + 10,coverWidth,coverHeight,20,10));
-	cover.push(new Cover(100,-coverHeight / 2 + 10,coverWidth,coverHeight,20,10));
-	enemies.push(new Enemy(400,-75 + 10));
-	enemies.push(new Enemy(450,-75 + 10));
+	for(var i = Math.random()*4+1; i > 0; i --)
+	{
+		cover.push(new Cover(Math.random()*900+100,-coverHeight/2+10,coverWidth,coverHeight,20,10));
+	}
+	for(var i = Math.random()*3; i > 0; i--)
+	{
+		var temp = new Enemy(0, -75+10);
+		temp.movable.pos.x = player.movable.pos.x + Math.random()*500+500;
+		if(temp.movable.pos.x <= -128)
+		{
+			temp.movable.pos.x += 1270;
+		}
+		else if(temp.movable.pos.x >= 1238)
+		{
+			temp.movable.pos.x -= 1270;
+		}
+		enemies.push(temp);
+	}
 }
 window.onblur = function(){
 	console.log("blur at" + Date());
