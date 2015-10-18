@@ -17,6 +17,12 @@ var camX = 0;
 var camY = 0;
 var now,fps, dt;
 
+var bulletsLeft = 6;
+var hearts = 3;
+var invincibilityDuration = 1;
+var invincibilityTimer = 0;
+var invincible = false;
+
 function init() {
 	animFrame( recursiveAnim );
 	resetLevel();
@@ -45,16 +51,30 @@ function update() {
 				continue;
 			}
 			
+
 			if(bullets[b].id == FACTION.ENEMY){
 				
-				//  Enemy killing player
-				if(player.collider.intersects(bullets[b].collider))
+				if(!invincible)
 				{
-					var recoil = 5;
-					if(bullets[b].movable.vel.x < 0) recoil = -recoil;
+					//  Enemy killing player
+					if(player.collider.intersects(bullets[b].collider))
+					{
+						var recoil = 5;
+						if(bullets[b].movable.vel.x < 0) recoil = -recoil;
 
-					player.movable.pos.x += recoil;
-					bullets[b].active = false;
+						if(hearts>0) hearts--;
+						//Initiate invinceibility!
+						invincible = true;
+
+						if(hearts == 0)
+						{
+							//  Call lose function!
+							
+						}
+
+						player.movable.pos.x += recoil;
+						bullets[b].active = false;
+					}
 				}
 			}
 			else
@@ -92,6 +112,14 @@ function update() {
 
 	input();
 	player.update(dt);
+	if(invincible) {
+		invincibilityTimer+= dt;
+		if(invincibilityTimer > invincibilityDuration)
+		{
+			invincibilityTimer = 0;	
+			invincible = false;	
+		}
+	}
 //	player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
 	if(player.movable.pos.x <= -128)
 	{
@@ -118,6 +146,31 @@ function update() {
 function worldToScreen(coord,camCoord,ctxDim) {
 	//sloppy and one dimensional for now, will refine after revamp to object "vectors"
 	return coord - camCoord + ctxDim / 2;
+}
+
+function drawUI (){
+	ctx.save();
+	if(!invincible) ctx.fillStyle = "red";
+	else ctx.fillStyle = "blue";
+	var heartWidth = 50;
+	var heartHeight = 60;
+	var heartMargin = 30;
+	for(var h = 0 ; h < hearts ; h++){
+		ctx.fillRect( 50 + (heartMargin*h) + (heartWidth*h), 30, heartWidth, heartHeight);
+	}
+	ctx.restore();
+
+	ctx.save();
+	var bulletWidth = 15;
+	var bulletHeight = 30;
+	var bulletMargin = 30;
+	for(var h = 0 ; h < bulletsLeft ; h++){
+		ctx.fillStyle = "black";
+		ctx.fillRect( 50 + (bulletMargin*h) + (bulletWidth*h) + 3, 30 + heartHeight + 20 + 3, bulletWidth, bulletHeight);
+		ctx.fillStyle = "#333333";
+		ctx.fillRect( 50 + (bulletMargin*h) + (bulletWidth*h), 30 + heartHeight + 20, bulletWidth, bulletHeight);
+	}
+	ctx.restore();	
 }
 
 function draw() {
@@ -147,6 +200,8 @@ function draw() {
 	for (var i = bullets.length - 1; i >= 0; i--) {
 		if(bullets[i].active) bullets[i].render(ctx,camX,camY);
 	};
+
+	drawUI();
 }
 function pauseGame() {
 		//pausedGame = true;

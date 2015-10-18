@@ -1,8 +1,16 @@
+var AI =  
+Object.seal({
+	IDLE:0,
+	CHASING:1,
+	BACKING_UP:2,
+	FIRING:3
+});
+
 function Enemy(x,y) {
 	
 	Person.call(this,x,y);
 	this.target = player;
-	this.targetRadius = 200 + (Math.random()*200 - 100);
+	this.targetRadius = 600 + (Math.random()*200 - 100);
 	this.velocity = 0;
 	this.bullets = 6;
 	//this.alerted = false;
@@ -10,6 +18,8 @@ function Enemy(x,y) {
 	this.faction = FACTION.ENEMY;
 	
 	this.fillStyle = "red";
+
+	this.state = AI.IDLE;
 	
 	this.fireAt = function(target) {
 		
@@ -34,11 +44,13 @@ function Enemy(x,y) {
 		this.gunDir = pPos.sub(ePos);
 		
 		this.updateShoot(dt);
+		
 		//if the player is firing on you, always fire back rn
-		 if(player.firing) {
+		if(player.firing) {
 		 	this.fireAt(this.target);
-		 }
-		 var dist = player.movable.pos.x - this.movable.pos.x;
+		}
+		var dist = player.movable.pos.x - this.movable.pos.x;
+		
 		//close the distance between you and the player
 		if(this.movement != MOVEMENT.BACKING && Math.abs(dist) > this.targetRadius) {
 			this.movement = MOVEMENT.WALKING;
@@ -47,10 +59,12 @@ function Enemy(x,y) {
 			this.facing = Math.sign(this.velocity);
 			//console.log(this.facing);
 		}
+		
 		//if you're backing up and the player has stopped
 		else if(this.movement === MOVEMENT.BACKING && player.movement != MOVEMENT.WALKING) {
 			this.movement = MOVEMENT.WALKING;
 		}
+		
 		//move away from the player if they start moving towards you at close range
 		else if(player.movement == MOVEMENT.WALKING) {
 			this.movement = MOVEMENT.BACKING;
@@ -59,6 +73,7 @@ function Enemy(x,y) {
 			this.facing = -Math.sign(this.velocity);
 		}
 		//fire if the player isn't already firing at you and you've closed the distance
+		
 		else if (!player.firing) {
 			this.fireAt(this.target);//atm the target doesn't do anything, as enemies just fire linearly.
 			//in the future this will allow the enemy to fire at you while ducking
@@ -68,6 +83,7 @@ function Enemy(x,y) {
 			//this happens when they are completely on top of each other
 			if(!this.facing) this.facing = FACING.LEFT;
 		}
+		
 		this.movable.vel.x = this.velocity;
 		this.movable.update(dt);
 		this.collider.update(this.movable.pos);
