@@ -1,6 +1,6 @@
-function Enemy(x,y,collisionRadius) {
+function Enemy(x,y) {
 	
-	Person.call(this,x,y,collisionRadius);
+	Person.call(this,x,y);
 	this.target = player;
 	this.targetRadius = 200 + (Math.random()*200 - 100);
 	this.velocity = 0;
@@ -29,8 +29,8 @@ function Enemy(x,y,collisionRadius) {
 	{
 		this.updateDisp();
 		
-		var pPos = player.movable.pos.sub(new Vector(0,player.disp.y / 2));//their position
-		var ePos = this.movable.pos.sub(new Vector(0,this.disp.y / 2));//our position
+		var pPos = player.movable.pos.sub(new Vector(0,player.disp.coords.y / 2));//their position
+		var ePos = this.movable.pos.sub(new Vector(0,this.disp.coords.y / 2));//our position
 		this.gunDir = pPos.sub(ePos);
 		
 		this.updateShoot(dt);
@@ -70,6 +70,7 @@ function Enemy(x,y,collisionRadius) {
 		}
 		this.movable.vel.x = this.velocity;
 		this.movable.update(dt);
+		this.collider.update(this.movable.pos);
 		
 		//  Animation updating
 		this.animation.worldX = this.movable.pos.x;

@@ -1,11 +1,11 @@
 "use strict";
 
-var TABLE =  
+/*var TABLE_STATE =  
 Object.seal({
-	LEFT:-1,
+	LEFT:-Math.PI / 2,
 	UP:0,
-	RIGHT:1
-});
+	RIGHT:Math.PI / 2
+});*/
 
 function Cover (xPos, yPos, width, height, thickness,legWidth) {
 //properties
@@ -21,85 +21,29 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
 	this.legWidth = legWidth
 
 	this.movable = new Movable(xPos,yPos,10);
+	this.rotation = 0;
+	this.collider = new BoundingBox(new Vector(xPos,yPos),new Vector(width,height));
+	
 	this.animation = new Animation(xPos,yPos,10);
 
-	this.tableStatus = TABLE.UP;
-
-	this.getPlayerCollisionRectangle = function()
-	{
-		if(this.tableStatus == TABLE.RIGHT)
-		{
-			return {
-		        	x:this.movable.pos.x + (this.w/2),
-		        	y:this.movable.pos.y - (this.h),
-		        	w:this.h,
-		        	h:this.w
-		        };
-        }
-        else if(this.tableStatus == TABLE.LEFT)
-		{
-			return {
-		        	x:this.movable.pos.x - (this.w/2) - this.h,
-		        	y:this.movable.pos.y - (this.h),
-		        	w:this.h,
-		        	h:this.w
-		        };
-        }
-        else
-        {
-			return {
-	        	x:this.movable.pos.x- (this.w/2),
-	        	y:this.movable.pos.y- (this.h),
-	        	w:this.w,
-	        	h:this.h
-        	}; 	        	
-        }
+	this.updateCollider = function() {
+		this.collider.update(this.movable.pos,this.collider.dims,this.rotation);
 	}
-
-	this.getBulletCollisionRectangle = function()
-	{
-		if(this.tableStatus == TABLE.RIGHT)
-		{
-			return {
-		        	x:this.movable.pos.x + (this.w/2) + this.h - this.thickness,
-		        	y:this.movable.pos.y - (this.h),
-		        	w:this.thickness,
-		        	h:this.w
-		        };
-        }
-        else if(this.tableStatus == TABLE.LEFT)
-		{
-			return {
-		        	x:this.movable.pos.x - (this.w/2) - this.h,
-		        	y:this.movable.pos.y - (this.h),
-		        	w:this.thickness,
-		        	h:this.w
-		        };
-        }
-        else
-        {
-			return {
-	        	x:this.movable.pos.x - (this.w/2),
-	        	y:this.movable.pos.y - (this.h),
-	        	w:this.w,
-	        	h:this.thickness
-        	}; 	        	
-        }
-	}
-
-//functions
-	this.alterTableStatus = function(direction){
+	
+	//functions
+	this.alterTableState = function(direction){
 		//handles tipping cover into tipped state
-		if(this.tableStatus != TABLE.UP)
+		if(this.rotation != 0)
 		{
-			this.tableStatus = TABLE.UP;
+			this.rotation = 0;
 		}
 		else
 		{
-			this.tableStatus = direction;
+			this.rotation = direction;
 		}
-
+		this.updateCollider();
 	};
+	
 	//draws cover
 	this.render = function(ctx,cx,cy){
     	//console.log("Pos: " + sx+", " + sy);
@@ -110,25 +54,18 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
         
         ctx.fillStyle = "brown";
 
-        if(this.tableStatus == TABLE.UP){
-	        ctx.fillRect(sx-(this.w/2),sy-this.h,this.legWidth,this.h);
-	        ctx.fillRect(sx+(this.w/2)-this.legWidth,sy-this.h,this.legWidth,this.h);
-	        ctx.fillRect(sx-(this.w/2),sy-this.h,this.w,this.thickness);
-        }
-        else if(this.tableStatus == TABLE.LEFT)
-        {
-        	ctx.fillRect(sx-(this.w/2)-this.h,sy-this.w,this.h,this.legWidth);
-        	ctx.fillRect(sx-(this.w/2)-this.h,sy-this.w,this.thickness,this.w);
-        	ctx.fillRect(sx-(this.w/2)-this.h,sy-this.legWidth,this.h,this.legWidth);
-        }
-        else
-        {	
-			ctx.fillRect(sx+(this.w/2),sy-this.w,this.h,this.legWidth);
-        	ctx.fillRect(sx+(this.w/2)+this.h - this.thickness,sy-this.w,this.thickness,this.w);
-        	ctx.fillRect(sx+(this.w/2),sy-this.legWidth,this.h,this.legWidth);
-        }
+		ctx.translate(sx,sy);
+		ctx.rotate(this.rotation);
+		//legs
+	    ctx.fillRect(-this.collider.dims.x / 2, -this.collider.dims.y / 2, this.legWidth, this.collider.dims.y);
+	    ctx.fillRect( this.collider.dims.x / 2 - this.legWidth, -this.collider.dims.y / 2, this.legWidth, this.collider.dims.y);
+		//table
+	    ctx.fillRect(-this.collider.dims.x / 2, -this.collider.dims.y / 2, this.collider.dims.x, this.thickness);
 
         ctx.restore();
+		
+		this.collider.debug(ctx,cx,cy);
     };
 	
+	this.updateCollider();
 }

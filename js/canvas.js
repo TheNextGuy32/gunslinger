@@ -2,144 +2,10 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
-//  Keyboard input
-var keys = {};
-var oldKeys = {};
-addEventListener("keydown", function (e) 
-{
-	if(!keys.hasOwnProperty(e.keyCode))
-	{
-		 // The key is newly down!
-    	keys[e.keyCode] = true;
-	}
-}, false);
-
-addEventListener("keyup", function (e) 
-{
-	if(keys.hasOwnProperty(e.keyCode))
-	{
-		 // The key is newly released!
-    	delete keys[e.keyCode];
-	}
-
-}, false);
-
-addEventListener("mousedown",function(e) {
-	if(gamePaused) {
-		resumeGame();
-		return;
-	}
-	if(player.canShoot){
-		player.fireBullet();
-	}
-});
-
-addEventListener("mousemove",function(e) {
-	var mouse = new Vector(0, 0);
-	var delta = new Vector(0, 0);
-	mouse.x = e.pageX - e.target.offsetLeft;
-	mouse.y = e.pageY - e.target.offsetTop;
-	delta.x = mouse.x - worldToScreen(player.movable.pos.x,camX,ctx.canvas.width);
-	//delta.x = player.facing*Math.abs(delta.x);
-	delta.y = mouse.y - worldToScreen(player.movable.pos.y-35,camY,ctx.canvas.height);
-	//console.log(mouse.x + "," + mouse.y + "; " + player.movable.px + "," + player.movable.py);
-	player.gunDir = delta;
-});
-
-function input()
-{
-	//Debug level-reset key: K
-	if(keys[75])
-	{
-		resetLevel();
-	}
-
-	if ( keys [87] && !oldKeys[87] ) {    //W
-
-		for (var c =0 ; c < cover.length; c++) {
-			if(doRectanglesOverlap(
-				player.getCollisionRectangle(),
-				cover[c].getPlayerCollisionRectangle()))
-			{
-				console.log("Was " + cover[c].tableStatus);
-				console.log(player.getCollisionRectangle());
-				console.log(cover[c].getPlayerCollisionRectangle());
-				
-				if(player.movable.pos.x <= cover[c].xPos)
-				{
-					cover[c].alterTableStatus(1);
-				}
-				else
-				{
-					cover[c].alterTableStatus(-1);
-				}
-				console.log("Now " + cover[c].tableStatus);
-				console.log("- - -");
-				break;
-			}
-
-		};
-	}
-
-	if ( keys [83] ) {    //S
-		//console.log('S');
-		//Slide
-		player.movement = MOVEMENT.CROUCHING;
-	}
-	else {
-
-		if((keys[68] && keys[65]) || (!keys[68] && !keys[65]) )
-		{
-			//  Do nothing when pushing both diretions
-			player.movement = MOVEMENT.STANDING;
-		}
-		else if (keys[68] ) {   // D
-			//console.log('D');
-			player.facing = FACING.RIGHT;
-			player.movement = MOVEMENT.WALKING;
-		}
-
-		else if ( keys[65] ) {    //Aa
-			//console.log('A');
-			player.facing = FACING.LEFT;
-			player.movement = MOVEMENT.WALKING;
-		}
-
-	
-		/*if ( keys [32] ) {    //Space
-			//console.log('Space');
-			// Bullet
-			if(player.canShoot){
-				var b = new Bullet(0,player.movable.px,player.movable.py-35,30);
-				b.facing = player.facing;
-				bullets.push(b);
-				player.canShoot = false;
-			}
-
-		}*/
-		if ( keys [16] ) {    //Shift
-			//console.log('Shift');
-			//  Run
-		}
-		if ( keys [80] ) {    //p
-			if(gamePaused){
-				gamePaused = false;
-				resumeGame();
-				//console.log('Resume');
-			}
-			else{
-			//console.log('Pause');
-			gamePaused = true;
-			pauseGame();
-			draw
-			}
-		}
-	}
-
-
-}
-
-var player = new Person(10,10,50);
+var choochoo = new Train(-70, 10, 1250, 500);
+var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
+var aestheticRightCar = new Train(1200, 10, 1250, 500);
+var player = new Person(10,-75 + 10); //Does changing the y value actually do anything?
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
@@ -150,17 +16,10 @@ var game = setTimeout(update,1000/30);
 var camX = 0;
 var camY = 0;
 var now,fps, dt;
+
 function init() {
 	animFrame( recursiveAnim );
 	resetLevel();
-}
-
-function doRectanglesOverlap(r1, r2)
-{
-	return !(r2.x > r1.x + r1.w || 
-           r2.x+r2.w < r1.x || 
-           r2.y > r1.y + r1.h ||
-           r2.y + r2.h < r1.y);
 }
 
 function update() {
@@ -177,10 +36,10 @@ function update() {
 	{
 		if(bullets[b].active){
 			//  If its going off the map
-			if(	bullets[b].movable.pos.x < -15 		|| 
-				bullets[b].movable.pos.x > 935 	||
-				bullets[b].movable.pos.y < -trainHeight	||
-				bullets[b].movable.pos.y > trainHeight * 2) 
+			if(	bullets[b].movable.pos.x < -30	|| 
+				bullets[b].movable.pos.x > 1135 	||
+				bullets[b].movable.pos.y < -1*choochoo.height	||
+				bullets[b].movable.pos.y > choochoo.height * 2) 
 			{
 				bullets[b].active = false;
 				continue;
@@ -189,9 +48,7 @@ function update() {
 			if(bullets[b].id == FACTION.ENEMY){
 				
 				//  Enemy killing player
-				if(doRectanglesOverlap(
-					bullets[b].getCollisionRectangle(),
-					player.getCollisionRectangle()))
+				if(player.collider.intersects(bullets[b].collider))
 				{
 					var recoil = 5;
 					if(bullets[b].movable.vel.x < 0) recoil = -recoil;
@@ -207,9 +64,7 @@ function update() {
 				{
 					if(enemies[e].active)
 					{
-						if(doRectanglesOverlap(
-							bullets[b].getCollisionRectangle(),
-							enemies[e].getCollisionRectangle()))
+						if(enemies[e].collider.intersects(bullets[b].collider))
 						{
 							//temporary
 							var recoil = -5;
@@ -227,9 +82,7 @@ function update() {
 			//  Colliding with cover
 			for (var c =0 ; c < cover.length; c++) 
 			{	
-				if(doRectanglesOverlap(
-					bullets[b].getCollisionRectangle(),
-					cover[c].getBulletCollisionRectangle()))
+				if(cover[c].collider.intersects(bullets[b].collider))
 				{
 					bullets[b].active = false;
 				}
@@ -239,59 +92,27 @@ function update() {
 
 	input();
 	player.update(dt);
-	player.movable.pos.x = Math.max(-15, Math.min(935, player.movable.pos.x));
+//	player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
+	if(player.movable.pos.x <= -128)
+	{
+		player.movable.pos.x += 1270;
+	}
+	else if(player.movable.pos.x >= 1238)
+	{
+		player.movable.pos.x -= 1270;
+	}
 
 	for (var i = bullets.length - 1; i >= 0; i--) {
-		if(bullets[i].active) bullets[i].update(dt);
-	};
+		if(bullets[i].active) 
+			bullets[i].update(dt);
+	};//is there a reason we work backwards here, but not for the other one?
 
 	for(var e = 0 ; e < enemies.length; e++){
-		if(enemies[e].active) enemies[e].update(dt);
+		if(enemies[e].active) 
+			enemies[e].update(dt);
 	}
 
 	oldKeys = $.extend( {}, keys );
-}
-
-var trainWidth = 1000;
-var trainHeight = 200;
-
-function drawTrain(x,y,cx,cy)
-{
-	var wheelRadius = 20;
-	var wheelSpacing = 300;
-	var sx = x - cx + (ctx.canvas.width/2);
-    var sy = y - cy + (ctx.canvas.height/2);
-
-	ctx.save();
-	
-	//Train Car (Brown Background)
-	var trainBackgroundGradient = ctx.createLinearGradient(sx, sy-trainHeight, sx, sy);
-	trainBackgroundGradient.addColorStop(0, "#2b1d0e");
-	trainBackgroundGradient.addColorStop(1, "#8b5d2e");
-	ctx.fillStyle = trainBackgroundGradient;
-	ctx.fillRect(sx,sy-200,1000,200);
-	
-	//Train Wheels
-	var trainWheelGradient = ctx.createRadialGradient(0, 0, 0, 0, 0, wheelRadius);
-	trainWheelGradient.addColorStop(0, "#333333");
-	trainWheelGradient.addColorStop(1, "#000000");
-	ctx.fillStyle = trainWheelGradient;
-	ctx.save();
-	ctx.translate(sx+wheelRadius, sy+wheelRadius);
-	for(var i = wheelRadius; i < trainWidth; i += wheelSpacing)
-	{
-		ctx.beginPath();
-		ctx.arc(0, 0, wheelRadius, 0, Math.PI*2, false);
-		ctx.closePath();
-		ctx.fill();
-		ctx.translate(wheelSpacing, 0);
-	}
-	ctx.restore();
-
-	//Train Rail
-	ctx.fillStyle = "#ffffff";
-	ctx.fillRect(0, sy+wheelRadius*1.9, ctx.canvas.width, 5);
-	ctx.restore();
 }
 
 function worldToScreen(coord,camCoord,ctxDim) {
@@ -307,9 +128,11 @@ function draw() {
 	ctx.restore();
 
 	camX = player.movable.pos.x;
-	camY = player.movable.pos.y;
+	camY = player.movable.pos.y-200;
 	
-	drawTrain(-40,10,camX,camY);
+	choochoo.render(ctx, camX, camY);
+	aestheticLeftCar.render(ctx, camX, camY);
+	aestheticRightCar.render(ctx, camX, camY);
 	
 	player.render(ctx,camX,camY);
 	
@@ -366,17 +189,18 @@ function resetLevel()
 	{
 		bullets[b].active = false;
 	}
-	player.movable.pos = new Vector(10, 10);
+	player.movable.pos = new Vector(10, -75 + 10);
 	cover = new Array();
 	enemies = new Array();
 	
 	//Fill arrays - should be changed to be more level-specific in the future
-	cover.push(new Cover(600,10,60,30,20,10));
-	cover.push(new Cover(350,10,60,30,20,10));
-	cover.push(new Cover(100,10,60,30,20,10));
 
-	enemies.push(new Enemy(400,10,50));
-	enemies.push(new Enemy(450,10,50));
+	var coverWidth = 80, coverHeight = 60;
+	cover.push(new Cover(800,-coverHeight / 2 + 10,coverWidth,coverHeight,20,10));
+	cover.push(new Cover(400,-coverHeight / 2 + 10,coverWidth,coverHeight,20,10));
+	cover.push(new Cover(100,-coverHeight / 2 + 10,coverWidth,coverHeight,20,10));
+	enemies.push(new Enemy(400,-75 + 10));
+	enemies.push(new Enemy(450,-75 + 10));
 }
 window.onblur = function(){
 	console.log("blur at" + Date());

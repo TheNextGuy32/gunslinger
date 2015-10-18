@@ -26,6 +26,19 @@ function Vector(initX, initY)
 		return new Vector(this.x/mag, this.y/mag);
 	};
 	
+	this.rotate = function(rot) {
+		var rotVec = this.copy();
+		var c = Math.cos(rot);
+		var s = Math.sin(rot);
+		rotVec.x = c * this.x - s * this.y;
+		rotVec.y = s * this.x + c * this.y;
+		return rotVec;
+	}
+	
+	this.heading = function() {
+		return Math.acos(this.normalize().x);
+	}
+	
 	this.add= function(otherVec)
 	{
 		return new Vector(this.x+otherVec.x, this.y+otherVec.y);
