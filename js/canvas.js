@@ -77,6 +77,15 @@ function update() {
 				{
 					if(enemies[e].active)
 					{
+						if(!enemies[e].aware)
+						{
+							var distance = Math.abs(enemies[e].movable.pos.x - bullets[b].movable.pos.x);
+							if(distance < 400)
+							{
+								enemies[e].aware = true;
+							}
+						}
+
 						if(enemies[e].collider.intersects(bullets[b].collider))
 						{
 							//temporary
