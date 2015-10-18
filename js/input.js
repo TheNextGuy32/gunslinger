@@ -76,7 +76,7 @@ function input()
 
 		}
 	}
-
+	
 	if ( keys [83] ) {    //S
 		//console.log('S');
 		//Slide

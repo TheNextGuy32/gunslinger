@@ -14,8 +14,8 @@ Object.seal({
 	BACKING: 5
 });
 
-const walkSpeed = 200;
-const runSpeed = 300;
+const walkSpeed = 250;
+const runSpeed = 350;
 
 function Person(x, y) 
 {
@@ -31,6 +31,7 @@ function Person(x, y)
 	this.facing = FACING.RIGHT;
 	this.movement = MOVEMENT.STANDING;
 	this.faction = FACTION.PLAYER;
+	
 
 	this.canShoot = true;
 	this.shootCooldown = 0.5;
