@@ -371,9 +371,10 @@ function resetLevel()
 	enemies = new Array();
 	
 	//Fill arrays - should be changed to be more level-specific in the future
-	cover.push(new Cover(400,10,40,30,10,5));
-	cover.push(new Cover(250,10,40,30,10,5));
-	cover.push(new Cover(100,10,40,30,10,5));
+	cover.push(new Cover(600,10,60,30,20,10));
+	cover.push(new Cover(350,10,60,30,20,10));
+	cover.push(new Cover(100,10,60,30,20,10));
+
 	enemies.push(new Enemy(400,10,50));
 	enemies.push(new Enemy(450,10,50));
 }
