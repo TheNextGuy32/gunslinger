@@ -9,9 +9,9 @@ var player = new Person(10,-75 + 10);
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
-var currentCarNum = 1;
+var currentCarNum = 0;
 var minCarNum = 0;
-var maxCarNum = 2;
+var maxCarNum = 10;
 
 var lastTime = (+new Date);
 var gamePaused = false;
@@ -263,7 +263,7 @@ function startGame(){
 		update();
 		recursiveAnim();
 		//console.log("start game");
-		resetLevel();
+		resetGame();
 	}
 function endScreen(){
 		gameEnd = true;
@@ -306,7 +306,7 @@ function drawEndScreen(){
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 		fillText("Lost all Hearts",canvas.width/2,canvas.height/2,"40pt courier","red");
-		fillText ("You made it through " + currentCarNum +  " rooms",canvas.width/2, canvas.height/2 + 60, "30pt Courier","white");
+		fillText ("You made it through " + currentCarNum +( currentCarNum == 1? " Car" : " Cars"),canvas.width/2, canvas.height/2 + 60, "30pt Courier","white");
 		fillText("Click Anywhere to Play Again",canvas.width/2,canvas.height/2 + 120,"20pt courier","white");
 		ctx.restore();
 }
@@ -326,7 +326,21 @@ function resetLevel()
 	var coverWidth = 90, coverHeight = 60;
 	for(var i = Math.random()*4+1; i > 0; i --)
 	{
-		cover.push(new Cover(Math.random()*900+100,-coverHeight/2+10,coverWidth,coverHeight,20,10));
+		var xPos, posIsAcceptable;
+		do
+		{
+			posIsAcceptable = true;
+			xPos = Math.random()*900+100;
+			console.log(xPos);
+			for(var c = 0; c < cover.length; c++)
+			{
+				if(Math.abs(cover[c].xPos-xPos) < coverWidth+5)
+				{
+					posIsAcceptable = false;
+				}
+			}
+		}while(!posIsAcceptable);
+		cover.push(new Cover(xPos,-coverHeight/2+10,coverWidth,coverHeight,20,10));
 	}
 	for(var i = Math.random()*3; i > 0; i--)
 	{
@@ -343,6 +357,15 @@ function resetLevel()
 		enemies.push(temp);
 	}
 }
+function resetGame()
+{
+	player.movable.pos.x = 10;
+	currentCarNum = 0;
+	hearts = 3;
+	bulletsLeft = bulletsPerClip;
+	resetLevel();
+}
+
 window.onblur = function(){
 	console.log("blur at" + Date());
 	pauseGame();

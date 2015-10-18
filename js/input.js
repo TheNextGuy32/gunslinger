@@ -56,10 +56,16 @@ addEventListener("mousemove",function(e) {
 
 function input()
 {
-	//Debug level-reset key: K
-	if(keys[75])
+	//Debug level-reset key: I
+	if(keys[73])
 	{
 		resetLevel();
+	}
+	
+	//Possibly final game-reset key: K
+	if(keys[75])
+	{
+		resetGame();
 	}
 
 	if ( keys [87] && !oldKeys[87] ) {    //W
