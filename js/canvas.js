@@ -11,7 +11,7 @@ var enemies = new Array();
 var bullets = new Array();
 var currentCarNum = 1;
 var minCarNum = 0;
-var maxCarNum = 2;
+var maxCarNum = 10;
 
 var lastTime = (+new Date);
 var gamePaused = false;
@@ -66,8 +66,7 @@ function update() {
 						if(hearts == 0)
 						{
 							gameEnd = true;
-							hearts = 3;
-							
+
 						}
 
 						player.movable.pos.x += recoil;
@@ -248,6 +247,9 @@ function resumeGame(){
 	}
 function startGame(){
 		gameEnd = false;
+		hearts = 3;
+		bulletsLeft = 6;
+		currentCarNum = 1;
 		gameStart = true;
 		update();
 		recursiveAnim();
