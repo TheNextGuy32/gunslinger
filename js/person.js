@@ -174,7 +174,7 @@ function Person(x, y)
 		ctx.fillStyle = 'black';
 		var bw = 40, bh = 10;
 		ctx.fillRect(-bw/2,-bh/2,bw,bh);
-		ctx.fillRect(-bw/2, -bh/2, bw/4, this.facing == FACING.RIGHT ? bh*2 : -1*bh);
+		ctx.fillRect(-bw/2, 0, bw/4, recoilDir*bh*1.5);
 		
 		ctx.restore();
 	}

@@ -27,8 +27,13 @@ addEventListener("mousedown",function(e) {
 		resumeGame();
 		return;
 	}
-	if(player.canShoot){
-		player.fireBullet();
+	if(player.canShoot)
+	{
+		if(bulletsLeft > 0)
+		{
+			player.fireBullet();
+			bulletsLeft --;
+		}
 	}
 });
 
@@ -128,6 +133,13 @@ function input()
 				gamePaused = true;
 				pauseGame();
 			}
+		}
+		
+		if( keys [82] )		//R
+		{
+			bulletsLeft = bulletsPerClip;
+			player.canShoot = false;
+			player.shootTimer = 0;
 		}
 	}
 }
