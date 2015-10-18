@@ -295,7 +295,7 @@ function drawEndScreen(){
 		ctx.textAlign = "center";
 		ctx.textBaseline = "middle";
 		fillText("Lost all Hearts",canvas.width/2,canvas.height/2,"40pt courier","red");
-		fillText ("You made it through " + currentCarNum +  " rooms",canvas.width/2, canvas.height/2 + 60, "30pt Courier","white");
+		fillText ("You made it through " + currentCarNum +( currentCarNum == 1? " Car" : " Cars"),canvas.width/2, canvas.height/2 + 60, "30pt Courier","white");
 		fillText("Click Anywhere to Play Again",canvas.width/2,canvas.height/2 + 120,"20pt courier","white");
 		ctx.restore();
 }
