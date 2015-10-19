@@ -41,6 +41,17 @@ function Person(x, y)
 	
 	this.fillStyle = "lightgrey";
 
+	this.move = function(vec) {
+		this.movable.pos = this.movable.pos.add(vec);
+		this.updateCollider();
+	}
+	
+	this.updateCollider = function() {
+		var colliderPos = this.movable.pos.copy();
+		colliderPos.y += this.disp.dims.y / 2 - this.disp.coords.y;
+		this.collider.update(colliderPos,this.disp.dims);
+	}
+	
 	this.updateShoot = function(dt) {
 		if(!this.canShoot){
 			this.shootTimer += dt;
@@ -117,9 +128,7 @@ function Person(x, y)
 		this.movable.vel.x = velocity;
 		this.movable.update(dt);
 		
-		var colliderPos = this.movable.pos.copy();
-		colliderPos.y += this.disp.dims.y / 2 - this.disp.coords.y;
-		this.collider.update(colliderPos,this.disp.dims);
+		this.updateCollider();
 
 		//  Animation updating
 		this.animation.worldX = this.movable.pos.x;

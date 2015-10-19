@@ -50,40 +50,58 @@ function Train(x, y, width, height)
     };
 	
 	this.constrain = function() {
-		for(var e in enemies) {
-			if(e.active && !this.collider.intersects(e.collider))
-				
+		for(var i = 0; i < cover.length; i++) {
+			var c = cover[i];
+			//this requires proper bounding on the train
+			var manifold = this.collider.intersects(c.collider);
+			if(c.active && !manifold) {
+				//this breaks rn, will work properly once above is fixed
+				//originator??
+				c.move(manifold.norm.mult(-manifold.pen));
+			}
 		}
-		for(var b in bullets) {
+		for(var i = 0; i < enemies.length; i++) {
+			var e = enemies[i];
+			//this requires proper bounding on the train
+			var manifold = this.collider.intersects(e.collider);
+			if(e.active && !manifold) {
+				//this breaks rn, will work properly once above is fixed
+				//originator??
+				e.move(manifold.norm.mult(-manifold.pen));
+			}
+		}
+		for(var i = 0; i < bullets.length; i++) {
+			var b = bullets[i];
 			if(b.active && !this.collider.intersects(b.collider))
 				b.active = false;
 		}
-			
-			if(player.movable.pos.x <= (currentCarNum > minCarNum ? -128 : -15))
-	{
-		if(currentCarNum > minCarNum)
-		{
-			player.movable.pos.x += 1270;
-			currentCarNum --;
-			resetLevel();
+		
+		//this will be redone to support car movement as well
+		var manifold = this.collider.intersects(player.collider);
+		if(!manifold) {
+			//this breaks rn, will work properly once above is fixed
+			//also need to account for originator
+			player.move(manifold.norm.mult(-manifold.pen));
 		}
-		else
-		{
-			player.movable.pos.x = -15;
+		if(player.movable.pos.x <= (currentCarNum > minCarNum ? -128 : -15)) {
+			if(currentCarNum > minCarNum) {
+				player.movable.pos.x += 1270;
+				currentCarNum --;
+				resetLevel();
+			}
+			else {
+				player.movable.pos.x = -15;
+			}
 		}
-	}
-	else if(player.movable.pos.x >= (currentCarNum < maxCarNum ? 1238 : 1120))
-	{
-		if(currentCarNum < maxCarNum)
-		{
-			player.movable.pos.x -= 1270;
-			currentCarNum ++;
-			resetLevel();
+		else if(player.movable.pos.x >= (currentCarNum < maxCarNum ? 1238 : 1120)) {
+			if(currentCarNum < maxCarNum) {
+				player.movable.pos.x -= 1270;
+				currentCarNum ++;
+				resetLevel();
+			}
+			else {
+				player.movable.pos.x = 1120;
+			}
 		}
-		else
-		{
-			player.movable.pos.x = 1120;
-		}
-	}
 	}
 }

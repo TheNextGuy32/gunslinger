@@ -44,7 +44,7 @@ function BoundingBox(coords,dims) {
 	}
 	
 	this.getMaxMin = function(axis) {
-		var maxmin = { max : this.corners[0].dot(axis), min: 1 ];
+		var maxmin = { max : this.corners[0].dot(axis), min: 1 };
 		for (var i = 1; i < this.corners.length; i++) {
 			var proj = this.corners[i].dot(axis);
 			if (proj < maxmin.min)
@@ -69,17 +69,23 @@ function BoundingBox(coords,dims) {
 	
 	//returns the normal and vertex with the greatest penetration,
 	//this can be the minimum axis of penetration (confusingly enough)
+	//the reasoning is that if the value is negative, there is penetration,
+	//so the greatest NEGATIVE value has the least penetration
+	//if the value is positive, then there is no penetration i.e. there is a separating axis
 	this.getAxisMinPen = function(other) {
-		var axis = { index: -1, maxPen: Number.NEGATIVE_INFINITY };
+		var axis = { originator: this
+		, norm: undefined, vert: undefined
+		, pen: Number.NEGATIVE_INFINITY };
 		for(var i = 0; i < this.normals.length; i++) {
 			var norm = this.normals[i];
 			var support = other.getSupportPoint(norm.mult(-1));
 			var vert = this.corners[i];
 			
 			var pen = norm.dot(support.point.sub(vert));
-			if(pen > axis.maxPen) {
-				axis.index = i;
-				axis.maxPen = pen;
+			if(pen > axis.pen) {
+				axis.norm = norm;
+				axis.vert = vert;
+				axis.pen = pen;
 			}
 		}
 		return axis;
@@ -92,15 +98,20 @@ function BoundingBox(coords,dims) {
 			return false;
 		
 		//separating axis theorem NEW IMPLEMENTATION
-		var minAxis = this.getAxisMinPen(other); 
+		//this contains the collision data
+		var manifold = undefined;
+		
+		var minAxis = this.getAxisMinPen(other);
 		if(minAxis.maxPen > 0)
-			return false;
+			return manifold;
 
 		var otherMinAxis = other.getAxisMinPen(this);
+		//this may be unnecessary
 		if (otherMinAxis.maxPen > 0)
-			return false;
+			return manifold;
 		
-		return true;
+		manifold = (minAxis.pen > otherMinAxis.pen) ? minAxis : otherMinAxis;
+		return manifold;
 	}
 	
 	this.intersectsMaxMin = function(other) { 
