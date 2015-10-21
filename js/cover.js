@@ -27,6 +27,11 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
 	this.animation = new Animation(xPos,yPos,10);
 	this.active = true;
 
+	this.move = function(vec) {
+		this.movable.pos = this.movable.pos.add(vec);
+		this.updateCollider();
+	}
+	
 	this.updateCollider = function() {
 		this.collider.update(this.movable.pos,this.collider.dims,this.rotation);
 	}
