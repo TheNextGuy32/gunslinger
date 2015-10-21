@@ -102,15 +102,16 @@ function BoundingBox(coords,dims) {
 		var manifold = undefined;
 		
 		var minAxis = this.getAxisMinPen(other);
-		if(minAxis.maxPen > 0)
+		if(minAxis.pen > 0)
 			return manifold;
 
 		var otherMinAxis = other.getAxisMinPen(this);
 		//this may be unnecessary
-		if (otherMinAxis.maxPen > 0)
+		if (otherMinAxis.pen > 0)
 			return manifold;
 		
 		manifold = (minAxis.pen > otherMinAxis.pen) ? minAxis : otherMinAxis;
+		//console.log(manifold.pen);
 		return manifold;
 	}
 	

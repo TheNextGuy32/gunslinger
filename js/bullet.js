@@ -22,7 +22,7 @@ function Bullet(factionID, x, y, ax, ay)
 	{
 		//  Movable updating
 		this.movable.update(dt);
-		this.collider.update(this.movable.pos.sub(this.collider.dims));
+		this.collider.update(this.movable.pos.sub(this.collider.dims.mult(0.5)));
 
 		//  Animation updating
 		this.animation.worldX = this.movable.pos.x;
@@ -42,6 +42,8 @@ function Bullet(factionID, x, y, ax, ay)
         ctx.fillstyle = "black";
         ctx.fillRect(sx-this.collider.dims.x,sy-this.collider.dims.y / 2
 		,this.collider.dims.x,this.collider.dims.y);
+		
+		this.collider.debug(ctx,cx,cy);
 
         ctx.restore();
     };
