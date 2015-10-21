@@ -5,10 +5,10 @@ function Train(x, y, width, height)
 	this.width = width;
 	this.height = height;
 	this.colliders = [];
-	this.colliders.push(new BoundingBox(new Vector(x, y - height - 100), new Vector(width, 200)));
-	this.colliders.push(new BoundingBox(new Vector(x, y + 100), new Vector(width, 200)));
-	this.colliders.push(new BoundingBox(new Vector(x - width / 2 - 100 - 20, y - this.height / 2), new Vector(200, this.height)));
-	this.colliders.push(new BoundingBox(new Vector(x + width / 2 + 100 - 20, y - this.height / 2), new Vector(200, this.height)));
+	this.colliders.push(new BoundingBox(new Vector(x + width / 2, y - height - 100), new Vector(width, 200)));
+	this.colliders.push(new BoundingBox(new Vector(x + width / 2, y + 100), new Vector(width, 200)));
+	this.colliders.push(new BoundingBox(new Vector(x - 10, y - this.height / 2), new Vector(20, this.height)));
+	this.colliders.push(new BoundingBox(new Vector(x + width + 10, y - this.height / 2), new Vector(20, this.height)));
 
     this.render = function(ctx,cx,cy)
     {
@@ -59,7 +59,7 @@ function Train(x, y, width, height)
     };
 	
 	this.constrain = function() {
-		//for(var i = 0;i < this.colliders.length;i++) {
+		//for(var i = 1;i < 2;i++) {
 			var collider = this.colliders[1];
 			for(var i = 0; i < cover.length; i++) {
 				//console.log("YEAH COVER");
@@ -69,7 +69,7 @@ function Train(x, y, width, height)
 				//this requires proper bounding on the train
 				var manifold = collider.intersects(c.collider);
 				if(manifold) {
-					c.move(manifold.norm.mult(-manifold.pen * 5));
+					c.move(manifold.norm.mult(manifold.pen));
 				}
 			}
 			for(var i = 0; i < enemies.length; i++) {
@@ -83,14 +83,14 @@ function Train(x, y, width, height)
 					
 					//this breaks rn, will work properly once above is fixed
 					//originator??
-					e.move(manifold.norm.mult(-manifold.pen * 5));
+					e.move(manifold.norm.mult(manifold.pen));
 				}
 			}
 			for(var i = 0; i < bullets.length; i++) {
 				//console.log("YEAH BULLET");
 				var b = bullets[i];
-				if(b.active && collider.intersects(b.collider)) {
-					
+				//bullets are broken in this system right now
+				if(b.active && !collider.intersects(b.collider)) {
 					b.active = false;
 				}
 			}
@@ -101,7 +101,7 @@ function Train(x, y, width, height)
 			if(manifold) {	
 				//this breaks rn, will work properly once above is fixed
 				//also need to account for originator
-				player.move(manifold.norm.mult(-manifold.pen * 0.0));
+				player.move(manifold.norm.mult(manifold.pen));
 			}
 			if(player.movable.pos.x <= (currentCarNum > minCarNum ? -128 : -15)) {
 				if(currentCarNum > minCarNum) {

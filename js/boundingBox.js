@@ -168,6 +168,9 @@ function BoundingBox(coords,dims) {
 		ctx.translate(sx,sy);
 		ctx.rotate(this.rotation);
 		ctx.strokeRect(-this.dims.x / 2,-this.dims.y / 2,this.dims.x,this.dims.y);
+		ctx.fillStyle = 'yellow';
+		ctx.globalAlpha = 0.2;
+		ctx.fillRect(-this.dims.x / 2,-this.dims.y / 2,this.dims.x,this.dims.y);
 		ctx.restore();
 	}
 	
