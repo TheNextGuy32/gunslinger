@@ -208,7 +208,7 @@ function pauseGame() {
   } 
   
 function resumeGame(){
-		cancelAnimationFrame(this.animationID);
+		cancelAnimationFrame(recursiveAnim);
 		gamePaused = false;
 		//update();
 		recursiveAnim();
