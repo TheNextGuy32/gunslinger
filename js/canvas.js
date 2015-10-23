@@ -3,8 +3,8 @@ var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
 var choochoo = new Train(-70, 10, 1250, 500);
-var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
-var aestheticRightCar = new Train(1200, 10, 1250, 500);
+var aestheticLeftCar = new Train(-1250 - 70 - 80, 10, 1250, 500);
+var aestheticRightCar = new Train(1250 - 70 + 80, 10, 1250, 500);
 var player = new Person(10,-75 + 10);
 var cover = new Array();
 var enemies = new Array();
@@ -208,7 +208,7 @@ function pauseGame() {
   } 
   
 function resumeGame(){
-		//cancelAnimationFrame(this.animationID);
+		cancelAnimationFrame(this.animationID);
 		gamePaused = false;
 		//update();
 		recursiveAnim();

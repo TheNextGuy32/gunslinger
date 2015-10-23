@@ -124,13 +124,10 @@ function input()
 		}
 		if ( keys [80] ) {    //p
 			if(gamePaused){
-				gamePaused = false;
 				resumeGame();
 				//console.log('Resume');
 			}
 			else {
-				//console.log('Pause');
-				gamePaused = true;
 				pauseGame();
 			}
 		}
