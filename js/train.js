@@ -6,8 +6,8 @@ function Train(x, y, width, height)
 	this.height = height;
 	var b1 = new BoundingBox(new Vector(x + width / 2, y - height - 100), new Vector(width, 200));
 	var b2 = new BoundingBox(new Vector(x + width / 2, y + 100), new Vector(width, 200));
-	var b3 = new BoundingBox(new Vector(x - 20, y - this.height / 2), new Vector(80, this.height));
-	var b4 = new BoundingBox(new Vector(x + width + 20, y - this.height / 2), new Vector(80, this.height));
+	var b3 = new BoundingBox(new Vector(x, y - this.height / 2), new Vector(100, this.height));
+	var b4 = new BoundingBox(new Vector(x + width, y - this.height / 2), new Vector(100, this.height));
 	var b5 = new BoundingBox(new Vector(x - 40,y + 10),new Vector(80,20));
 	var b6 = new BoundingBox(new Vector(x + width + 40,y + 10),new Vector(80,20));
 	this.colliders = [b1,b2,b3,b4,b5,b6];
@@ -117,22 +117,22 @@ function Train(x, y, width, height)
 				}
 				if(K == 2) {
 					if(currentCarNum > minCarNum) {
-						player.movable.pos.x += 1270 - 170;
+						player.movable.pos.x += 1270 - 200;
 						currentCarNum --;
 						resetLevel();
 					}
 					else {
-						player.movable.pos.x = -15;
+						player.movable.pos.x = 15;
 					}
 				}
 				else if(K == 3) {
 					if(currentCarNum < maxCarNum) {
-						player.movable.pos.x -= 1270 - 170;
+						player.movable.pos.x -= 1270 - 200;
 						currentCarNum ++;
 						resetLevel();
 					}
 					else {
-						player.movable.pos.x = 1120;
+						player.movable.pos.x = 1090;
 					}
 				}
 			}

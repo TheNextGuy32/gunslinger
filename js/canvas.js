@@ -5,7 +5,7 @@ var ctx = canvas.getContext('2d');
 var choochoo = new Train(-70, 10, 1250, 500);
 var aestheticLeftCar = new Train(-1250 - 70 - 80, 10, 1250, 500);
 var aestheticRightCar = new Train(1250 - 70 + 80, 10, 1250, 500);
-var player = new Person(10,-75 + 10);
+var player = new Person(30,-75 + 10);
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
@@ -56,7 +56,7 @@ function update() {
 						if(bullets[b].movable.vel.x < 0) recoil = -recoil;
 
 						if(hearts>0) hearts--;
-						//Initiate invinceibility!
+						//Initiate invincibility!
 						invincible = true;
 
 						if(hearts == 0)
