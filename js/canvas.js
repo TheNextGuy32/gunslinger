@@ -5,7 +5,7 @@ var ctx = canvas.getContext('2d');
 var choochoo = new Train(-70, 10, 1250, 500);
 var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
 var aestheticRightCar = new Train(1200, 10, 1250, 500);
-var player = new Person(10,-75 + 10,"images/playeranimations.png");
+var player = new Person(10,-75 + 10);
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
@@ -331,7 +331,7 @@ function resetLevel()
 		{
 			posIsAcceptable = true;
 			xPos = Math.random()*900+100;
-			//console.log(xPos);
+			console.log(xPos);
 			for(var c = 0; c < cover.length; c++)
 			{
 				if(Math.abs(cover[c].xPos-xPos) < coverWidth+5)
@@ -367,11 +367,11 @@ function resetGame()
 }
 
 window.onblur = function(){
-	//console.log("blur at" + Date());
+	console.log("blur at" + Date());
 	pauseGame();
 }
 window.onfocus = function(){
-	//console.log("focus at" + Date());
+	console.log("focus at" + Date());
 	resumeGame();
 }
 window.onload = init;
