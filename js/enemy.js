@@ -24,6 +24,7 @@ function Enemy(x,y) {
 		if(!this.canShoot)
 			return;
 		if(this.bullets > 0) {
+			playEffect(3);
 			this.fireBullet();
 		}
 		else {

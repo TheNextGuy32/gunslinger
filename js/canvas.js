@@ -1,7 +1,10 @@
 'use strict';
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
-
+var bgAudio = undefined;
+var effectAudio = undefined;
+var currentEffect = 0;
+var soundEffects = ["playershoot.mp3","table.mp3","reload.mp3","enemyshoot.mp3"];
 var choochoo = new Train(-70, 10, 1250, 500);
 var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
 var aestheticRightCar = new Train(1200, 10, 1250, 500);
@@ -31,6 +34,10 @@ var invincible = false;
 
 function init() {
 	animFrame( recursiveAnim );
+	bgAudio = document.querySelector("#bgAudio");
+	bgAudio.volume = 0.15;
+	effectAudio = document.querySelector("#effectAudio");
+	effectAudio.volume = 0.3;
 	resetLevel();
 }
 
@@ -248,6 +255,7 @@ function pauseGame() {
 		//pausedGame = true;
 		gamePaused = true;
 		cancelAnimationFrame(recursiveAnim);
+		stopBGAudio();
 		//update();
   } 
   
@@ -256,7 +264,7 @@ function resumeGame(){
 		gamePaused = false;
 		update();
 		recursiveAnim();
-		//this.sound.playBGAudio();
+		bgAudio.play();
 	}
 function startGame(){
 		gameEnd = false;
@@ -313,6 +321,8 @@ function drawEndScreen(){
 }
 function resetLevel()
 {
+	bgAudio.currentTime = 0;
+	bgAudio.play();
 	bulletsLeft = 6;
 	//Reset bullets and player, create new arrays for cover & enemies
 	for (var b = 0; b < bullets.length ; b++)
@@ -360,13 +370,22 @@ function resetLevel()
 }
 function resetGame()
 {
+	bgAudio.play();
 	player.movable.pos.x = 10;
 	currentCarNum = 0;
 	hearts = 3;
 	bulletsLeft = bulletsPerClip;
 	resetLevel();
 }
-
+function stopBGAudio(){
+		bgAudio.pause();
+		bgAudio.currentTime = 0;
+}
+function playEffect(effect){
+	currentEffect = effect;
+	effectAudio.src = "media/" + soundEffects[currentEffect];
+	effectAudio.play();
+}
 window.onblur = function(){
 	console.log("blur at" + Date());
 	pauseGame();

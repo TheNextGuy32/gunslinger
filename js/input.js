@@ -35,6 +35,7 @@ addEventListener("mousedown",function(e) {
 	{
 		if(bulletsLeft > 0)
 		{
+			playEffect(0);
 			player.fireBullet();
 			bulletsLeft --;
 		}
@@ -73,6 +74,7 @@ function input()
 		for (var c =0 ; c < cover.length; c++) {
 			if(player.collider.intersects(cover[c].collider))
 			{
+				playEffect(1);
 				console.log("Was " + cover[c].tableState);
 				console.log(player.collider);
 				console.log(cover[c].collider);
@@ -152,6 +154,7 @@ function input()
 	}
 	if( keys [82] )		//R
 		{
+			playEffect(2);
 			bulletsLeft = bulletsPerClip;
 			player.canShoot = false;
 			player.shootTimer = -0.6;
