@@ -56,11 +56,11 @@ addEventListener("mousemove",function(e) {
 
 function input()
 {
-	//Debug level-reset key: I
-	if(keys[73])
-	{
-		resetLevel();
-	}
+//	//Debug level-reset key: I
+//	if(keys[73])
+//	{
+//		resetLevel();
+//	}
 	
 	//Possibly final game-reset key: K
 	if(keys[75])
@@ -133,7 +133,7 @@ function input()
 			//console.log('Shift');
 			//  Run
 		}
-		if ( keys [80] ) {    //p
+		if ( keys [80] || keys[27]) {    //p & esc
 			if(gamePaused){
 				gamePaused = false;
 				resumeGame();

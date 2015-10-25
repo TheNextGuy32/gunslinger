@@ -107,6 +107,7 @@ function Enemy(x,y) {
 
 		this.movable.vel.x = this.velocity;
 		this.movable.update(dt);
+		this.movable.pos.x = Math.max(-15, Math.min(1120, this.movable.pos.x));
 		this.collider.update(this.movable.pos);
 		
 		//  Animation updating

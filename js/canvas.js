@@ -35,16 +35,21 @@ function init() {
 }
 
 function update() {
-	if(gamePaused == true || gameStart == false || gameEnd == true)
-	{
-		return;
-	}
-	
 	//Calculating dt
 	now = (+new Date); 
 	fps = 1000 / (now - lastTime);
 	lastTime = now; 
 	dt = 1/fps;
+	
+	if(gamePaused == true || gameStart == false || gameEnd == true)
+	{
+		return;
+	}
+	
+	for (var i = 0; i < bullets.length; i++) {
+		if(bullets[i].active) 
+			bullets[i].update(dt);
+	}
 	
 	for (var b = 0; b < bullets.length ; b++)
 	{
@@ -105,7 +110,7 @@ function update() {
 							break;
 						}
 					}
-				};
+				}
 			}
 
 			//  Colliding with cover
@@ -115,7 +120,7 @@ function update() {
 				{
 					bullets[b].active = false;
 				}
-			};
+			}
 			
 			
 			if(!choochoo.collider.intersects(bullets[b].collider))
@@ -124,7 +129,7 @@ function update() {
 				continue;
 			}
 		}
-	};
+	}
 
 	input();
 	player.update(dt);
@@ -136,7 +141,7 @@ function update() {
 			invincible = false;	
 		}
 	}
-//	player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
+	//player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
 	if(player.movable.pos.x <= (currentCarNum > minCarNum ? -128 : -15))
 	{
 		if(currentCarNum > minCarNum)
@@ -164,10 +169,6 @@ function update() {
 		}
 	}
 
-	for (var i = bullets.length - 1; i >= 0; i--) {
-		if(bullets[i].active) 
-			bullets[i].update(dt);
-	};//is there a reason we work backwards here, but not for the other one?
 
 	for(var e = 0 ; e < enemies.length; e++){
 		if(enemies[e].active) 
