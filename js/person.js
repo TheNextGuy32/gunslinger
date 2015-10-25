@@ -15,7 +15,7 @@ Object.seal({
 });
 
 const walkSpeed = 250;
-const runSpeed = 350;
+const runSpeed = 750;
 
 function Person(x, y) 
 {

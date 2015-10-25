@@ -130,8 +130,10 @@ function input()
 
 		}*/
 		if ( keys [16] ) {    //Shift
-			//console.log('Shift');
-			//  Run
+			if(player.movement == MOVEMENT.WALKING)
+			{
+				player.movement = MOVEMENT.RUNNING;
+			}
 		}
 		if ( keys [80] || keys[27]) {    //p & esc
 			if(gamePaused){
