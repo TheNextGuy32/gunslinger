@@ -71,6 +71,12 @@ function Train(x, y, width, height)
 				//this requires proper bounding on the train
 				var manifold = collider.intersects(c.collider);
 				if(manifold) {
+					if(K == 2 || K == 3) {
+						c.launching *= -1;
+						c.movable.vel.x *= -1;
+					}
+					else
+						c.launching = 0;
 					var dir = 1;
 					if(manifold.originator != c.collider)
 						dir *= -1;
@@ -98,7 +104,7 @@ function Train(x, y, width, height)
 				//bullets are broken in this system right now
 				var manifold = collider.intersects(b.collider);
 				if(b.active && manifold) {
-					console.log(manifold);
+					//console.log(manifold);
 					console.log(collider.coords +","+ collider.dims);
 					console.log(b.collider.coords +","+ b.collider.dims);
 					b.active = false;

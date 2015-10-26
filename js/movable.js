@@ -19,7 +19,7 @@ function Movable (x, y, mass)
 	
 	this.calcConstantForces = function() {
 		this.forces.push(new Vector(0,9.8 * mass));
-		//this.forces.push(this.vel.mult(this.vel.getMag() * -0.4 * this.mass));
+		//this.forces.push(this.vel.mult(this.vel.getMag() * -0.15 * this.mass));
 	};
 
     this.update = function(dt){
