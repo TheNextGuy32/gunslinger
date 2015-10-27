@@ -27,8 +27,12 @@ addEventListener("mousedown",function(e) {
 		resumeGame();
 		return;
 	}
-	if(gameStart == false || gameEnd == true) {
+	if(!gameStart || gameEnd) {
 		startGame();
+		if(gameEnd)
+		{
+			bgAudio.currentTime = 0;
+		}
 		return;
 	}
 	if(player.canShoot)

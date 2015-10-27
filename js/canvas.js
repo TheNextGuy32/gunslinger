@@ -321,7 +321,7 @@ function drawEndScreen(){
 }
 function resetLevel()
 {
-	bgAudio.currentTime = 0;
+//	bgAudio.currentTime = 0;
 	bgAudio.play();
 	bulletsLeft = 6;
 	//Reset bullets and player, create new arrays for cover & enemies
@@ -379,7 +379,6 @@ function resetGame()
 }
 function stopBGAudio(){
 		bgAudio.pause();
-		bgAudio.currentTime = 0;
 }
 function playEffect(effect){
 	currentEffect = effect;
