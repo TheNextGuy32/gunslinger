@@ -5,9 +5,10 @@ var bgAudio = undefined;
 var effectAudio = undefined;
 var currentEffect = 0;
 var soundEffects = ["playershoot.mp3","table.mp3","reload.mp3","enemyshoot.mp3"];
-var choochoo = new Train(-70, 10, 1250, 500);
-var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
-var aestheticRightCar = new Train(1200, 10, 1250, 500);
+var choochoo = new Train(-70, 10, 1250, 500, 0);
+var aestheticLeftCar = new Train(-1340, 10, 1250, 500, 1);
+var aestheticRightCar = new Train(1200, 10, 1250, 500, 1);
+var exteriorChangeRate = 1;
 var player = new Person(10,-75 + 10);
 var cover = new Array();
 var enemies = new Array();
@@ -31,6 +32,7 @@ var hearts = 3;
 var invincibilityDuration = 1;
 var invincibilityTimer = 0;
 var invincible = false;
+var debugMode = false;
 
 function init() {
 	animFrame( recursiveAnim );
@@ -149,10 +151,30 @@ function update() {
 		}
 	}
 	//player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
+	if(player.movable.pos.x <= -32)
+	{
+		choochoo.changeBackgroundOpacity(exteriorChangeRate*dt);
+		aestheticLeftCar.changeBackgroundOpacity(-1*exteriorChangeRate*dt);
+	}
+	else if(player.movable.pos.x >= 1142)
+	{
+		choochoo.changeBackgroundOpacity(exteriorChangeRate*dt);
+		aestheticRightCar.changeBackgroundOpacity(-1*exteriorChangeRate*dt);
+	}
+	else
+	{
+		choochoo.changeBackgroundOpacity(-1*exteriorChangeRate*dt);
+		aestheticLeftCar.changeBackgroundOpacity(exteriorChangeRate*dt);
+		aestheticRightCar.changeBackgroundOpacity(exteriorChangeRate*dt);
+	}
+	
 	if(player.movable.pos.x <= (currentCarNum > minCarNum ? -128 : -15))
 	{
 		if(currentCarNum > minCarNum)
 		{
+			aestheticRightCar.backgroundOpacity = choochoo.backgroundOpacity;
+			choochoo.backgroundOpacity = aestheticLeftCar.backgroundOpacity;
+			aestheticLeftCar.backgroundOpacity = 1;
 			player.movable.pos.x += 1270;
 			currentCarNum --;
 			resetLevel();
@@ -166,6 +188,9 @@ function update() {
 	{
 		if(currentCarNum < maxCarNum)
 		{
+			aestheticLeftCar.backgroundOpacity = choochoo.backgroundOpacity;
+			choochoo.backgroundOpacity = aestheticRightCar.backgroundOpacity;
+			aestheticRightCar.backgroundOpacity = 1;
 			player.movable.pos.x -= 1270;
 			currentCarNum ++;
 			resetLevel();
@@ -342,7 +367,6 @@ function resetLevel()
 		{
 			posIsAcceptable = true;
 			xPos = Math.random()*900+100;
-			console.log(xPos);
 			for(var c = 0; c < cover.length; c++)
 			{
 				if(Math.abs(cover[c].xPos-xPos) < coverWidth+5)

@@ -144,7 +144,10 @@ function Person(x, y)
 		this.drawBody(ctx,sx,sy);
 		this.drawGun(ctx,sx,sy);
 		
-		this.drawDebug(ctx,sx,sy,camX,camY);
+		if(debugMode)
+		{
+			this.drawDebug(ctx,sx,sy,camX,camY);
+		}
 		
         ctx.restore();
     };

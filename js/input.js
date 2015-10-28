@@ -9,6 +9,37 @@ addEventListener("keydown", function (e)
 	{
 		 // The key is newly down!
     	keys[e.keyCode] = true;
+		
+		//And now a few lines for things we want to happen on initial keypress frame only.
+		
+		switch(e.keyCode)
+		{
+		case 73:	//I
+			debugMode = !debugMode;
+			break;
+		case 75:	//K
+			resetGame();
+			break;
+		
+		case 80:	//Esc
+		case 27:	//P
+			gamePaused = !gamePaused;
+			if(gamePaused)
+			{
+				pauseGame();
+			}
+			else
+			{
+				resumeGame();
+			}
+			break;
+		case 82:	//R
+			playEffect(2);
+			bulletsLeft = bulletsPerClip;
+			player.canShoot = false;
+			player.shootTimer = -0.6;
+			break;
+		}
 	}
 }, false);
 
@@ -66,22 +97,12 @@ function input()
 //	{
 //		resetLevel();
 //	}
-	
-	//Possibly final game-reset key: K
-	if(keys[75])
-	{
-		resetGame();
-	}
-
 	if ( keys [87] && !oldKeys[87] ) {    //W
 
 		for (var c =0 ; c < cover.length; c++) {
 			if(player.collider.intersects(cover[c].collider))
 			{
 				playEffect(1);
-				console.log("Was " + cover[c].tableState);
-				console.log(player.collider);
-				console.log(cover[c].collider);
 				
 				if(player.movable.pos.x <= cover[c].xPos)
 				{
@@ -91,8 +112,6 @@ function input()
 				{
 					cover[c].alterTableState(-Math.PI / 2);
 				}
-				console.log("Now " + cover[c].tableState);
-				console.log("- - -");
 				break;
 			}
 
@@ -100,7 +119,6 @@ function input()
 	}
 	
 	if ( keys [83] ) {    //S
-		//console.log('S');
 		//Slide
 		player.movement = MOVEMENT.CROUCHING;
 	}
@@ -112,55 +130,22 @@ function input()
 			player.movement = MOVEMENT.STANDING;
 		}
 		else if (keys[68] ) {   // D
-			//console.log('D');
 			player.facing = FACING.RIGHT;
 			player.movement = MOVEMENT.WALKING;
 		}
 
 		else if ( keys[65] ) {    //Aa
-			//console.log('A');
 			player.facing = FACING.LEFT;
 			player.movement = MOVEMENT.WALKING;
 		}
-
-	
-		/*if ( keys [32] ) {    //Space
-			//console.log('Space');
-			// Bullet
-			if(player.canShoot){
-				var b = new Bullet(0,player.movable.px,player.movable.py-35,30);
-				b.facing = player.facing;
-				bullets.push(b);
-				player.canShoot = false;
-			}
-
-		}*/
+		
+		
 		if ( keys [16] ) {    //Shift
 			if(player.movement == MOVEMENT.WALKING)
 			{
 				player.movement = MOVEMENT.RUNNING;
 			}
 		}
-		if ( keys [80] || keys[27]) {    //p & esc
-			if(gamePaused){
-				gamePaused = false;
-				resumeGame();
-				//console.log('Resume');
-			}
-			else {
-				//console.log('Pause');
-				gamePaused = true;
-				pauseGame();
-			}
-		}
-		
-		
+
 	}
-	if( keys [82] )		//R
-		{
-			playEffect(2);
-			bulletsLeft = bulletsPerClip;
-			player.canShoot = false;
-			player.shootTimer = -0.6;
-		}
 }
