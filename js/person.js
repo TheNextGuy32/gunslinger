@@ -17,7 +17,7 @@ Object.seal({
 const walkSpeed = 250;
 const runSpeed = 750;
 
-function Person(x, y,, animationFile) 
+function Person(x, y, animationFile) 
 {
 	this.baseWidth = 75;
 	this.baseHeight = 150;
@@ -106,14 +106,21 @@ function Person(x, y,, animationFile)
 
 		//  Movable updating
 		var velocity = 0;
-		switch(this.movement) {
+		if(this.movement == MOVEMENT.WALKING)
+        {
+            velocity = walkSpeed;            
+        }
+        switch(this.movement)
+        {
+		case MOVEMENT.CROUCHING:
+            this.animation.setRow(2);
+            break;
 		case MOVEMENT.WALKING:
-		case MOVEMENT.SLIDING:
-			velocity = walkSpeed;			
+			this.animation.setRow(1);	
 			break;
-		case MOVEMENT.RUNNING:
-			velocity = runSpeed;
-			break;
+		default:
+            this.animation.setRow(0);   
+        break;
 		}//this could probably be simplified into an array of speeds
 		velocity *= this.facing;
 		

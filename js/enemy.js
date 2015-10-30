@@ -112,10 +112,12 @@ function Enemy(x,y) {
 		this.movable.pos.x = Math.max(-15, Math.min(1120, this.movable.pos.x));
 		this.collider.update(this.movable.pos);
 		
-		//  Animation updating
-		this.animation.worldX = this.movable.pos.x;
-		this.animation.worldY = this.movable.pos.y;
-
+		if (this.facing == FACING.LEFT) {
+            this.animation.reverse = true;
+        }
+        else {
+            this.animation.reverse = false;
+        }
 		this.animation.update(dt);
 	}
 	

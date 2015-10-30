@@ -1,11 +1,8 @@
-function Animation (worldX, worldY, radius) 
-{
-    this.worldX = worldX;
-    this.worldY = worldY;
-    
+function Animation (image,numberRows,numberColumns) 
+{    
     this.currentFrame = 0;
-    this.maxFrame = 0;
-    this.frameDuration = 5;
+    this.maxFrame = numberColumns;
+    this.frameDuration = 0.3;
     this.frameTimer = 0;
 
     this.currentFrameRow = 0;
@@ -23,12 +20,9 @@ function Animation (worldX, worldY, radius)
         this.currentFrameRow = row;
     };
 
-    this.render = function(ctx,cameraX,cameraY)
+    this.update = function(dt)
     {
-        var screenX = this.worldX - cameraX + 400;
-        var screenY = this.worldY - cameraY + 400;
-
-        this.frameTimer+= 0.25;
+        this.frameTimer+=dt;
         if(this.frameDuration < this.frameTimer){
             this.frameTimer -= this.frameDuration;
             this.currentFrame++;
