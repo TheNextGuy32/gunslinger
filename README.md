@@ -1,6 +1,6 @@
 # Gunslinger
 ######The Table Flipping Game
-To play, visit www.not-in-service.com
+To play, visit http://oliverbarnum.com/projects/gunslinger/gunslinger.html
 
 ###How to play
 + **A**, **D**: Move left and right
