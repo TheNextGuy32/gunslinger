@@ -29,7 +29,7 @@ function Person(x, y, animationFile) {
     this.movement = MOVEMENT.STANDING;
     this.faction = FACTION.PLAYER;
 
-    this.animation = new Animation(animationFile, 3, 3);
+    this.animation = new Animation("media/playeranimations.png", 3, 3);
 
     this.canShoot = true;
     this.shootCooldown = 0.7;
@@ -38,6 +38,8 @@ function Person(x, y, animationFile) {
     this.gunDir = new Vector(0, 0);
 
     this.fillStyle = "lightgrey";
+
+    this.isPlayer = true;
 
     this.updateShoot = function (dt) {
 
@@ -145,6 +147,7 @@ function Person(x, y, animationFile) {
 
     this.render = function (ctx, camX, camY) {
         //console.log("Pos: " + sx+", " + sy);
+        
         var sx = worldToScreen(this.movable.pos.x, camX, ctx.canvas.width);
         var sy = worldToScreen(this.movable.pos.y, camY, ctx.canvas.height);
 
@@ -153,11 +156,16 @@ function Person(x, y, animationFile) {
 
         //this.drawBody(ctx, sx, sy);
 
-        this.animation.render(this.movable.pos.x, this.movable.pos.y, ctx, camX, camY);
+        if(this.isPlayer)
+        {
+            // console.log("CX: " + camX + ", CY: " + camY);
+            // console.log("SX: " + sx + ", SY: " + sy);
+        }
+        this.animation.render(sx, sy, ctx, this.isPlayer,-this.disp.coords.x, -this.disp.coords.y);
 
         this.drawGun(ctx, sx, sy);
 
-        this.drawDebug(ctx, sx, sy, camX, camY);
+        //this.drawDebug(ctx, sx, sy, camX, camY);
 
         ctx.restore();
     };

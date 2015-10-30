@@ -5,7 +5,7 @@ var ctx = canvas.getContext('2d');
 var choochoo = new Train(-70, 10, 1250, 500);
 var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
 var aestheticRightCar = new Train(1200, 10, 1250, 500);
-var player = new Person(10,-75 + 10,"images/playeranimations.png");
+var player = new Person(10,-75 + 10,"media/playeranimations.png");
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
@@ -30,11 +30,14 @@ var invincibilityTimer = 0;
 var invincible = false;
 
 function init() {
+
 	animFrame( recursiveAnim );
 	resetLevel();
 }
 
+
 function update() {
+
 	if(gamePaused == true || gameStart == false || gameEnd == true)
 	{
 		return;
@@ -207,6 +210,7 @@ function drawUI (){
 	ctx.restore();	
 }
 
+
 function draw() {
 	//ctx.globalAlpha = 0.25;
 	ctx.save();
@@ -227,8 +231,9 @@ function draw() {
 		aestheticRightCar.render(ctx, camX, camY);
 	}
 	
-	player.render(ctx,camX,camY);
 	
+	player.render(ctx,camX,camY);
+
 	for(var e = 0 ; e < enemies.length; e++){
 		if(enemies[e].active)enemies[e].render(ctx,camX,camY);
 	}
@@ -242,6 +247,7 @@ function draw() {
 	};
 
 	drawUI();
+
 }
 function pauseGame() {
 		//pausedGame = true;

@@ -1,6 +1,6 @@
 function Enemy(x,y) {
 	
-	Person.call(this,x,y,"images/playeranimations.png");
+	Person.call(this,x,y,"media/playeranimations.png");
 	this.target = player;
 	this.targetRadius = 600 + (Math.random()*200 - 100);
 	this.velocity = 0;
@@ -18,6 +18,7 @@ function Enemy(x,y) {
 	this.hitstunDuration = 0.5;
 	this.hitstunTimer = 0;
 	this.stunned = false;
+	this.isPlayer = false;
 
 	this.fireAt = function(target) {
 		

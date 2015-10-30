@@ -29,12 +29,19 @@ function Animation(image, numberRows, numberColumns) {
         }
     };
 
-    this.render = function (x, y, ctx, cx, cy) {
-        var sx = worldToScreen(x, camX, ctx.canvas.width);
-        var sy = worldToScreen(y, camY, ctx.canvas.height);
-
+    this.render = function (sx, sy, ctx, isPlayer, x, y) {
+        
         ctx.save();
+        
         ctx.translate(sx, sy - 45);
+        if(isPlayer) {
+
+        }
+        else
+        {
+            
+        }
+
         if (this.reverse) {
             ctx.translate(this.frameWidth, 0);
             ctx.scale(-1, 1);
@@ -43,12 +50,13 @@ function Animation(image, numberRows, numberColumns) {
         else {
             ctx.translate(-this.frameWidth, 0);
         }
-
+        this.frameWidth = 55;
+        this.frameHeight = 64;
         ctx.drawImage(
             this.img,
             this.currentFrame * this.frameWidth, this.currentFrameRow * this.frameHeight,
             this.frameWidth, this.frameHeight,
-            0, 0,
+            0,0,
             this.frameWidth * 2, this.frameHeight * 2);
 
         ctx.restore();
