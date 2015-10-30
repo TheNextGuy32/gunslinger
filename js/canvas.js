@@ -2,10 +2,15 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
-var choochoo = new Train(-70, 10, 1250, 500);
-var aestheticLeftCar = new Train(-1340, 10, 1250, 500);
-var aestheticRightCar = new Train(1200, 10, 1250, 500);
 var player = new Person(10,-75 + 10,"media/playeranimations.png");
+var bgAudio = undefined;
+var effectAudio = undefined;
+var currentEffect = 0;
+var soundEffects = ["playershoot.mp3","table.mp3","reload.mp3","enemyshoot.mp3"];
+var choochoo = new Train(-70, 10, 1250, 500, 0);
+var aestheticLeftCar = new Train(-1340, 10, 1250, 500, 1);
+var aestheticRightCar = new Train(1200, 10, 1250, 500, 1);
+var exteriorChangeRate = 1;
 var cover = new Array();
 var enemies = new Array();
 var bullets = new Array();
@@ -28,26 +33,35 @@ var hearts = 3;
 var invincibilityDuration = 1;
 var invincibilityTimer = 0;
 var invincible = false;
+var debugMode = false;
 
 function init() {
 
 	animFrame( recursiveAnim );
+	bgAudio = document.querySelector("#bgAudio");
+	bgAudio.volume = 0.15;
+	effectAudio = document.querySelector("#effectAudio");
+	effectAudio.volume = 0.3;
 	resetLevel();
 }
 
 
 function update() {
-
-	if(gamePaused == true || gameStart == false || gameEnd == true)
-	{
-		return;
-	}
-	
 	//Calculating dt
 	now = (+new Date); 
 	fps = 1000 / (now - lastTime);
 	lastTime = now; 
 	dt = 1/fps;
+	
+	if(gamePaused == true || gameStart == false || gameEnd == true)
+	{
+		return;
+	}
+	
+	for (var i = 0; i < bullets.length; i++) {
+		if(bullets[i].active) 
+			bullets[i].update(dt);
+	}
 	
 	for (var b = 0; b < bullets.length ; b++)
 	{
@@ -108,7 +122,7 @@ function update() {
 							break;
 						}
 					}
-				};
+				}
 			}
 
 			//  Colliding with cover
@@ -118,7 +132,7 @@ function update() {
 				{
 					bullets[b].active = false;
 				}
-			};
+			}
 			
 			
 			if(!choochoo.collider.intersects(bullets[b].collider))
@@ -127,7 +141,7 @@ function update() {
 				continue;
 			}
 		}
-	};
+	}
 
 	input();
 	player.update(dt);
@@ -139,11 +153,31 @@ function update() {
 			invincible = false;	
 		}
 	}
-//	player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
+	//player.movable.pos.x = Math.max(-32, Math.min(1142, player.movable.pos.x));
+	if(player.movable.pos.x <= -32)
+	{
+		choochoo.changeBackgroundOpacity(exteriorChangeRate*dt);
+		aestheticLeftCar.changeBackgroundOpacity(-1*exteriorChangeRate*dt);
+	}
+	else if(player.movable.pos.x >= 1142)
+	{
+		choochoo.changeBackgroundOpacity(exteriorChangeRate*dt);
+		aestheticRightCar.changeBackgroundOpacity(-1*exteriorChangeRate*dt);
+	}
+	else
+	{
+		choochoo.changeBackgroundOpacity(-1*exteriorChangeRate*dt);
+		aestheticLeftCar.changeBackgroundOpacity(exteriorChangeRate*dt);
+		aestheticRightCar.changeBackgroundOpacity(exteriorChangeRate*dt);
+	}
+	
 	if(player.movable.pos.x <= (currentCarNum > minCarNum ? -128 : -15))
 	{
 		if(currentCarNum > minCarNum)
 		{
+			aestheticRightCar.backgroundOpacity = choochoo.backgroundOpacity;
+			choochoo.backgroundOpacity = aestheticLeftCar.backgroundOpacity;
+			aestheticLeftCar.backgroundOpacity = 1;
 			player.movable.pos.x += 1270;
 			currentCarNum --;
 			resetLevel();
@@ -157,6 +191,9 @@ function update() {
 	{
 		if(currentCarNum < maxCarNum)
 		{
+			aestheticLeftCar.backgroundOpacity = choochoo.backgroundOpacity;
+			choochoo.backgroundOpacity = aestheticRightCar.backgroundOpacity;
+			aestheticRightCar.backgroundOpacity = 1;
 			player.movable.pos.x -= 1270;
 			currentCarNum ++;
 			resetLevel();
@@ -167,10 +204,6 @@ function update() {
 		}
 	}
 
-	for (var i = bullets.length - 1; i >= 0; i--) {
-		if(bullets[i].active) 
-			bullets[i].update(dt);
-	};//is there a reason we work backwards here, but not for the other one?
 
 	for(var e = 0 ; e < enemies.length; e++){
 		if(enemies[e].active) 
@@ -253,6 +286,7 @@ function pauseGame() {
 		//pausedGame = true;
 		gamePaused = true;
 		cancelAnimationFrame(recursiveAnim);
+		stopBGAudio();
 		//update();
   } 
   
@@ -261,7 +295,7 @@ function resumeGame(){
 		gamePaused = false;
 		update();
 		recursiveAnim();
-		//this.sound.playBGAudio();
+		bgAudio.play();
 	}
 function startGame(){
 		gameEnd = false;
@@ -318,6 +352,8 @@ function drawEndScreen(){
 }
 function resetLevel()
 {
+//	bgAudio.currentTime = 0;
+	bgAudio.play();
 	bulletsLeft = 6;
 	//Reset bullets and player, create new arrays for cover & enemies
 	for (var b = 0; b < bullets.length ; b++)
@@ -337,7 +373,6 @@ function resetLevel()
 		{
 			posIsAcceptable = true;
 			xPos = Math.random()*900+100;
-			//console.log(xPos);
 			for(var c = 0; c < cover.length; c++)
 			{
 				if(Math.abs(cover[c].xPos-xPos) < coverWidth+5)
@@ -365,19 +400,27 @@ function resetLevel()
 }
 function resetGame()
 {
+	bgAudio.play();
 	player.movable.pos.x = 10;
 	currentCarNum = 0;
 	hearts = 3;
 	bulletsLeft = bulletsPerClip;
 	resetLevel();
 }
-
+function stopBGAudio(){
+		bgAudio.pause();
+}
+function playEffect(effect){
+	currentEffect = effect;
+	effectAudio.src = "media/" + soundEffects[currentEffect];
+	effectAudio.play();
+}
 window.onblur = function(){
-	//console.log("blur at" + Date());
+	console.log("blur at" + Date());
 	pauseGame();
 }
 window.onfocus = function(){
-	//console.log("focus at" + Date());
+	console.log("focus at" + Date());
 	resumeGame();
 }
 window.onload = init;

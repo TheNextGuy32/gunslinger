@@ -25,6 +25,7 @@ function Enemy(x,y) {
 		if(!this.canShoot)
 			return;
 		if(this.bullets > 0) {
+			playEffect(3);
 			this.fireBullet();
 		}
 		else {
@@ -59,7 +60,7 @@ function Enemy(x,y) {
 				this.velocity = dist;
 				this.velocity *= 50 / this.targetRadius;//makes it proportional to distance
 				this.facing = Math.sign(this.velocity);
-				
+				//console.log(this.facing);
 			}
 			
 			//if you're backing up and the player has stopped
@@ -108,21 +109,13 @@ function Enemy(x,y) {
 
 		this.movable.vel.x = this.velocity;
 		this.movable.update(dt);
+		this.movable.pos.x = Math.max(-15, Math.min(1120, this.movable.pos.x));
 		this.collider.update(this.movable.pos);
 		
-		if (this.velocity != 0) {
-		    this.animation.setRow(1);
-		}
-		else {
-		    this.animation.setRow(0);
-		}
+		//  Animation updating
+		this.animation.worldX = this.movable.pos.x;
+		this.animation.worldY = this.movable.pos.y;
 
-		if (this.facing == FACING.LEFT) {
-		    this.animation.reverse = true;
-		}
-		else {
-		    this.animation.reverse = false;
-		}
 		this.animation.update(dt);
 	}
 	

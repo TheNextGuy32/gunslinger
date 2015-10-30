@@ -64,8 +64,11 @@ function Cover (xPos, yPos, width, height, thickness,legWidth) {
 
         ctx.restore();
 		
-		this.collider.debug(ctx,cx,cy);
-    };
+		if(debugMode)
+		{
+			this.collider.debug(ctx,cx,cy);
+		}
+	};
 	
 	this.updateCollider();
 }
