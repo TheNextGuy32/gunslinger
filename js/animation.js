@@ -17,7 +17,6 @@ function Animation(image, numberRows, numberColumns) {
 
     this.setRow = function (row) {
         this.currentFrameRow = row;
-
     };
 
 
