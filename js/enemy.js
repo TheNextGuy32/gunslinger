@@ -1,6 +1,6 @@
 function Enemy(x,y) {
 	
-	Person.call(this,x,y,"media/playeranimations.png");
+	Person.call(this,x,y,"media_shared/playeranimations.png");
 	this.target = player;
 	this.targetRadius = 600 + (Math.random()*200 - 100);
 	this.velocity = 0;

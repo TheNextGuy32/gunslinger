@@ -26,7 +26,7 @@ function Person(x, y, animationFile)
 	this.movable = new Movable(x,y,10);
 	this.collider = new BoundingBox(new Vector(x,y),new Vector(this.baseWidth,this.baseHeight));
 	
-	this.animation = new Animation("media/playeranimations.png", 3, 3);
+	this.animation = new Animation("media_shared/playeranimations.png", 3, 3);
 	
 	this.facing = FACING.RIGHT;
 	this.movement = MOVEMENT.STANDING;

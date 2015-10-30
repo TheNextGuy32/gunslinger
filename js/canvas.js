@@ -2,7 +2,7 @@
 var canvas = document.getElementById("canvas");
 var ctx = canvas.getContext('2d');
 
-var player = new Person(10,-75 + 10,"media/playeranimations.png");
+var player = new Person(10,-75 + 10,"media_shared/playeranimations.png");
 var bgAudio = undefined;
 var effectAudio = undefined;
 var currentEffect = 0;
@@ -412,7 +412,7 @@ function stopBGAudio(){
 }
 function playEffect(effect){
 	currentEffect = effect;
-	effectAudio.src = "media/" + soundEffects[currentEffect];
+	effectAudio.src = "media_shared/" + soundEffects[currentEffect];
 	effectAudio.play();
 }
 window.onblur = function(){
