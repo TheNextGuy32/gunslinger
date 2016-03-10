@@ -1,9 +1,13 @@
 # Gunslinger
 ######The Table Flipping Game
-To play, visit www.not-in-service.com
+To play, visit http://oliverbarnum.com/projects/gunslinger/gunslinger.html
 
 ###How to play
-Use ASD to move and space to fire your pistol. The player can convert tables to cover using E. The player can use the S key to duck and, if the player has momentum, can slide.
++ **A**, **D**: Move left and right
++ **W**: Flip or right tables (when close enough)
++ **S**: Crouch
++ **Left Mouse Button**: Fire gun
++ **K**: Reset game
 
 ###How to win
 Clear the entire train of hostiles. 
